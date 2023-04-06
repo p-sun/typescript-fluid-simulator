@@ -78,13 +78,17 @@ export class FluidSim implements CanvasListener {
   }
 }
 
+// Can't go inside createFluidSim, to make it work with StackBlitz.
+let fluidSim: FluidSim | undefined;
+
 export function createFluidSim(
   tunnel: TunnelType,
-  rootElement: HTMLCanvasElement
+  rootElement: HTMLCanvasElement,
+  buttonsElement: HTMLCanvasElement
 ) {
   const initialScene = appendHTMLButtons(
     tunnel,
-    document.body,
+    buttonsElement,
     (tunnel: TunnelType) => {
       const newScene = getSceneConfig(tunnel, CSIZE);
       if (fluidSim) {
@@ -95,7 +99,7 @@ export function createFluidSim(
   );
 
   const fluidCanvas = new Canvas(rootElement, CSIZE);
-  const fluidSim = new FluidSim(initialScene, fluidCanvas.context);
+  fluidSim = new FluidSim(initialScene, fluidCanvas.context);
   fluidCanvas.setListener(fluidSim);
   return fluidSim;
 }

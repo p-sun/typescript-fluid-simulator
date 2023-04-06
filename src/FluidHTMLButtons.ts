@@ -1,15 +1,15 @@
-import { Scene, SceneChoice } from './FluidScene';
+import { Scene, TunnelType } from './FluidScene';
 
 export function appendHTMLButtons(
-  sceneChoice: SceneChoice,
+  sceneChoice: TunnelType,
   rootElement: HTMLElement,
-  getSceneConfig: (choice: SceneChoice) => Scene
+  getSceneConfig: (tunnel: TunnelType) => Scene
 ) {
   const inputDiv = document.createElement('inputDiv') as HTMLCanvasElement;
   rootElement.append(inputDiv);
   const initialScene = getSceneConfig(sceneChoice);
-  const setupScene = (choice: SceneChoice) => {
-    const scene = getSceneConfig(choice);
+  const setupScene = (tunnel: TunnelType) => {
+    const scene = getSceneConfig(tunnel);
     inputDiv.innerHTML = '';
     appendButtonsForScene(inputDiv, scene, setupScene);
     return scene;
@@ -21,7 +21,7 @@ export function appendHTMLButtons(
 function appendButtonsForScene(
   root: HTMLElement,
   scene: Scene,
-  setupScene: (choice: SceneChoice) => void
+  setupScene: (tunnel: TunnelType) => void
 ) {
   const inputs = createInputs(scene, setupScene);
   root.append(
@@ -47,7 +47,7 @@ function appendButtonsForScene(
   );
 }
 
-function createInputs(scene: Scene, setupScene: (choice: SceneChoice) => void) {
+function createInputs(scene: Scene, setupScene: (tunnel: TunnelType) => void) {
   function updateInputs() {
     inputs.checkboxes.stream.checked = scene.showStreamlines;
     inputs.checkboxes.velocity.checked = scene.showVelocities;
@@ -76,8 +76,8 @@ function createInputs(scene: Scene, setupScene: (choice: SceneChoice) => void) {
         setupScene('Tank Tunnel');
         updateInputs();
       }),
-      createButton('Hires Tunnel', () => {
-        setupScene('Hires Tunnel');
+      createButton('HiRes Tunnel', () => {
+        setupScene('HiRes Tunnel');
         updateInputs();
       }),
     ],

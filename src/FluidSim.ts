@@ -1,7 +1,7 @@
 import { Canvas, CanvasListener } from './Canvas';
 import { CSIZE, draw } from './FluidDraw';
 import { appendHTMLButtons } from './FluidHTMLButtons';
-import { getSceneConfig, Scene, SceneChoice, setObstacle } from './FluidScene';
+import { getSceneConfig, Scene, TunnelType, setObstacle } from './FluidScene';
 
 export class FluidSim implements CanvasListener {
   private scene: Scene;
@@ -31,18 +31,12 @@ export class FluidSim implements CanvasListener {
     this.scene.frameNr++;
   }
 
-  togglePause() {
-    this.scene.paused = !this.scene.paused;
-    if (!this.scene.paused) {
-      this.update();
+  keyDown(key: 'm' | 'p') {
+    if (key === 'm') {
+      this.step();
+    } else if (key === 'p') {
+      this.pausePressed();
     }
-  }
-
-  step() {
-    this.scene.paused = false;
-    this.simulate();
-    draw(this.scene, this.context);
-    this.scene.paused = true;
   }
 
   startDrag(cx: number, cy: number) {
@@ -60,6 +54,20 @@ export class FluidSim implements CanvasListener {
     this.mouseDown = false;
   }
 
+  private pausePressed() {
+    this.scene.paused = !this.scene.paused;
+    if (!this.scene.paused) {
+      this.update();
+    }
+  }
+
+  private step() {
+    this.scene.paused = false;
+    this.simulate();
+    draw(this.scene, this.context);
+    this.scene.paused = true;
+  }
+
   private sX(canvasX: number) {
     return canvasX / CSIZE.y;
   }
@@ -71,14 +79,14 @@ export class FluidSim implements CanvasListener {
 }
 
 export function createFluidSim(
-  choice: SceneChoice,
+  tunnel: TunnelType,
   rootElement: HTMLCanvasElement
 ) {
   const initialScene = appendHTMLButtons(
-    choice,
+    tunnel,
     document.body,
-    (choice: SceneChoice) => {
-      const newScene = getSceneConfig(choice, CSIZE);
+    (tunnel: TunnelType) => {
+      const newScene = getSceneConfig(tunnel, CSIZE);
       if (fluidSim) {
         fluidSim.setScene(newScene);
       }

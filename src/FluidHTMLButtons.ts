@@ -1,33 +1,34 @@
 import { Scene, TunnelType } from './FluidScene';
+import { HTMLSlider } from './HTMLSlider';
+
+type SetupSceneFn = (tunnel: TunnelType, numY: number) => Scene;
 
 export function appendHTMLButtons(
   sceneChoice: TunnelType,
   rootElement: HTMLElement,
-  getSceneConfig: (tunnel: TunnelType) => Scene
+  getSceneConfig: SetupSceneFn
 ) {
   const inputDiv = document.createElement('inputDiv') as HTMLCanvasElement;
   rootElement.append(inputDiv);
-  const initialScene = getSceneConfig(sceneChoice);
-  const setupScene = (tunnel: TunnelType) => {
-    const scene = getSceneConfig(tunnel);
+  const initialScene = getSceneConfig(sceneChoice, 0);
+  const setupScene: SetupSceneFn = (tunnel, numY) => {
+    const scene = getSceneConfig(tunnel, numY);
     inputDiv.innerHTML = '';
-    appendButtonsForScene(inputDiv, scene, setupScene);
+    createButtonsForScene(inputDiv, scene, setupScene);
     return scene;
   };
-  appendButtonsForScene(inputDiv, initialScene, setupScene);
+  createButtonsForScene(inputDiv, initialScene, setupScene);
   return initialScene;
 }
 
-function appendButtonsForScene(
+function createButtonsForScene(
   root: HTMLElement,
   scene: Scene,
-  setupScene: (tunnel: TunnelType) => void
+  setupScene: SetupSceneFn
 ) {
   const inputs = createInputs(scene, setupScene);
   root.append(
     //inputs.startButton,
-    document.createElement('br'),
-    document.createElement('br'),
     ...inputs.buttons,
     document.createElement('br'),
     inputs.checkboxes.stream,
@@ -42,12 +43,12 @@ function appendButtonsForScene(
     'Obstacle',
     inputs.checkboxes.overRelax,
     'Over Relaxation',
-    document.createElement('br'),
+    inputs.resolutionSlider.container,
     document.createTextNode('Shortcuts: P - Pause/Start, M - Step')
   );
 }
 
-function createInputs(scene: Scene, setupScene: (tunnel: TunnelType) => void) {
+function createInputs(scene: Scene, setupScene: SetupSceneFn) {
   function updateInputs() {
     inputs.checkboxes.stream.checked = scene.showStreamlines;
     inputs.checkboxes.velocity.checked = scene.showVelocities;
@@ -56,6 +57,7 @@ function createInputs(scene: Scene, setupScene: (tunnel: TunnelType) => void) {
     inputs.checkboxes.overRelax.checked = scene.overRelaxation > 1.0;
     inputs.checkboxes.obstacle.checked = scene.showObstacle;
     inputs.startButton.innerHTML = scene.paused ? 'Start' : 'Pause';
+    inputs.resolutionSlider.setValue(scene.fluid.numY);
   }
 
   const inputs = {
@@ -65,19 +67,19 @@ function createInputs(scene: Scene, setupScene: (tunnel: TunnelType) => void) {
     }),
     buttons: [
       createButton('Wind Tunnel', () => {
-        setupScene('Wind Tunnel');
+        setupScene('Wind Tunnel', 0);
         updateInputs();
       }),
       createButton('Paint Tunnel', () => {
-        setupScene('Paint Tunnel');
+        setupScene('Paint Tunnel', 0);
         updateInputs();
       }),
       createButton('Tank Tunnel', () => {
-        setupScene('Tank Tunnel');
+        setupScene('Tank Tunnel', 0);
         updateInputs();
       }),
       createButton('HiRes Tunnel', () => {
-        setupScene('HiRes Tunnel');
+        setupScene('HiRes Tunnel', 0);
         updateInputs();
       }),
     ],
@@ -101,6 +103,20 @@ function createInputs(scene: Scene, setupScene: (tunnel: TunnelType) => void) {
         scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;
       }),
     },
+    resolutionSlider: new HTMLSlider(
+      {
+        initialValue: scene.fluid.numY,
+        min: 10,
+        max: 100,
+        stepSize: 10,
+        label: 'Resolution',
+        callbackOnlyOnPointerUp: true,
+      },
+      (newValue) => {
+        setupScene(scene.tunnel, newValue);
+        updateInputs();
+      }
+    ),
   };
   return inputs;
 }

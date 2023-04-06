@@ -1,11 +1,11 @@
 import { Scene } from './FluidScene';
 
-export type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
+type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
 
-export class Fluid {
+export class FluidPhysics {
   density: number;
 
-  // Grid
+  // Grid Sizes
   numX: number;
   numY: number;
   numCells: number; // Total number of cells
@@ -239,8 +239,6 @@ export class Fluid {
     }
     this.m.set(this.newM);
   }
-
-  // ----------------- end of simulator ------------------------------
 
   simulate(scene: Scene, dt: number, gravity: number, numIters: number) {
     this.integrate(dt, gravity);

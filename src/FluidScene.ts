@@ -1,4 +1,4 @@
-import { Fluid } from './Fluid';
+import { FluidPhysics } from './FluidPhysics';
 import Vec2 from './GenericModels/Vec2';
 
 export type Scene = {
@@ -17,20 +17,20 @@ export type Scene = {
   showVelocities: boolean;
   showPressure: boolean;
   showSmoke: boolean;
-  fluid: Fluid;
+  fluid: FluidPhysics;
 };
 
-function makeFluid(numY: number, canvasSize: Vec2) {
+function makeFluidPhysics(numY: number, canvasSize: Vec2) {
   const domainHeight = 1.0;
   const domainWidth = (domainHeight * canvasSize.x) / canvasSize.y;
   const h = domainHeight / numY;
   const numX = Math.floor(domainWidth / h);
   const density = 1000.0;
-  return new Fluid(density, numX, numY, h);
+  return new FluidPhysics(density, numX, numY, h);
 }
 
 export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
-  const res = sceneNr == 0 ? 50 : sceneNr == 3 ? 200 : 100;
+  const resolution = sceneNr == 0 ? 50 : sceneNr == 3 ? 200 : 100;
 
   const scene: Scene = {
     gravity: -9.81,
@@ -48,7 +48,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     showVelocities: false,
     showPressure: false,
     showSmoke: true,
-    fluid: makeFluid(res, canvasSize),
+    fluid: makeFluidPhysics(resolution, canvasSize),
   };
 
   scene.sceneNr = sceneNr;

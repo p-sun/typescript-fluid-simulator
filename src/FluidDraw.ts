@@ -1,28 +1,29 @@
 import { Scene } from './FluidScene';
 import Vec2 from './GenericModels/Vec2';
 
-export const cSize = new Vec2(window.innerWidth - 80, window.innerHeight - 150);
+// Canvas and Canvas Context are the same size
+export const CSIZE = new Vec2(window.innerWidth - 80, window.innerHeight - 160);
 const windowScale = window.devicePixelRatio;
-const pxWidth = Math.floor(cSize.x * windowScale);
-const pxHeight = Math.floor(cSize.y * windowScale);
+const pxWidth = Math.floor(CSIZE.x * windowScale);
+const pxHeight = Math.floor(CSIZE.y * windowScale);
 
 // Grid index --> canvas
 function gcX(gridX: number, h: number) {
-  return gridX * h * cSize.y;
+  return gridX * h * CSIZE.y;
 }
 function gcY(gridY: number, h: number) {
-  return cSize.y - gridY * h * cSize.y;
+  return CSIZE.y - gridY * h * CSIZE.y;
 }
 
 // Simulation units --> canvas, (i.e. vertical Y is 1)
 function cX(simulationX: number) {
-  return simulationX * cSize.y;
+  return simulationX * CSIZE.y;
 }
 function cY(simulationY: number) {
-  return cSize.y - simulationY * cSize.y;
+  return CSIZE.y - simulationY * CSIZE.y;
 }
 function cL(simulationLength: number) {
-  return simulationLength * cSize.y;
+  return simulationLength * CSIZE.y;
 }
 
 export function draw(scene: Scene, c: CanvasRenderingContext2D) {
@@ -30,7 +31,7 @@ export function draw(scene: Scene, c: CanvasRenderingContext2D) {
   const n = f.numY;
   const h = f.h;
 
-  c.clearRect(0, 0, cSize.x, cSize.y);
+  c.clearRect(0, 0, CSIZE.x, CSIZE.y);
   c.fillStyle = '#FF0000';
 
   let minP = f.p[0];

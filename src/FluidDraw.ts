@@ -148,7 +148,7 @@ export function draw(scene: Scene, c: CanvasRenderingContext2D) {
     }
   }
 
-  if (scene.showObstacle) {
+  if (scene.showObstacle && scene.obstacleX) {
     const r = scene.obstacleRadius + f.h;
 
     c.fillStyle = scene.showPressure ? '#000000' : '#DDDDDD';

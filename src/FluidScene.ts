@@ -43,7 +43,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     obstacleRadius: 0.15,
     paused: false,
     sceneNr: 0,
-    showObstacle: false,
+    showObstacle: true,
     showStreamlines: false,
     showVelocities: false,
     showPressure: false,
@@ -164,6 +164,4 @@ export function setObstacle(
       }
     }
   }
-
-  scene.showObstacle = true;
 }

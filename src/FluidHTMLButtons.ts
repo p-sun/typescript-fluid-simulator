@@ -38,6 +38,8 @@ function appendButtonsForScene(
     'Pressure',
     inputs.checkboxes.smoke,
     'Smoke',
+    inputs.checkboxes.obstacle,
+    'Obstacle',
     inputs.checkboxes.overRelax,
     'Over Relaxation',
     document.createElement('br'),
@@ -52,6 +54,7 @@ function createInputs(scene: Scene, setupScene: (num: number) => void) {
     inputs.checkboxes.pressure.checked = scene.showPressure;
     inputs.checkboxes.smoke.checked = scene.showSmoke;
     inputs.checkboxes.overRelax.checked = scene.overRelaxation > 1.0;
+    inputs.checkboxes.obstacle.checked = scene.showObstacle;
     inputs.startButton.innerHTML = scene.paused ? 'Start' : 'Pause';
   }
 
@@ -90,6 +93,9 @@ function createInputs(scene: Scene, setupScene: (num: number) => void) {
       }),
       smoke: createCheckbox(scene.showSmoke, () => {
         scene.showSmoke = !scene.showSmoke;
+      }),
+      obstacle: createCheckbox(scene.showObstacle, () => {
+        scene.showObstacle = !scene.showObstacle;
       }),
       overRelax: createCheckbox(scene.overRelaxation > 1.0, () => {
         scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;

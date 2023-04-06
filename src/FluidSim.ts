@@ -4,24 +4,25 @@ import { appendHTMLButtons } from './FluidHTMLButtons';
 import { getSceneConfig, Scene, setObstacle } from './FluidScene';
 
 export class FluidSim implements CanvasListener {
-  public scene: Scene;
+  private scene: Scene;
   private mouseDown = false;
   private context: CanvasRenderingContext2D;
-  private startRunloop: () => void;
 
-  constructor(
-    scene: Scene,
-    context: CanvasRenderingContext2D,
-    startRunloop: () => void
-  ) {
+  constructor(scene: Scene, context: CanvasRenderingContext2D) {
     this.scene = scene;
     this.context = context;
-    this.startRunloop = startRunloop;
+  }
+
+  setScene(scene: Scene) {
+    this.scene = scene;
   }
 
   update() {
     this.simulate();
     draw(this.scene, this.context);
+    if (!this.scene.paused) {
+      requestAnimationFrame(this.update.bind(this));
+    }
   }
 
   simulate() {
@@ -33,7 +34,7 @@ export class FluidSim implements CanvasListener {
   togglePause() {
     this.scene.paused = !this.scene.paused;
     if (!this.scene.paused) {
-      this.startRunloop();
+      this.update();
     }
   }
 
@@ -71,8 +72,7 @@ export class FluidSim implements CanvasListener {
 
 export function createFluidSim(
   sceneNum: number,
-  rootElement: HTMLCanvasElement,
-  startRunloop: () => void
+  rootElement: HTMLCanvasElement
 ) {
   const initialScene = appendHTMLButtons(
     sceneNum,
@@ -80,18 +80,14 @@ export function createFluidSim(
     (num: number) => {
       const newScene = getSceneConfig(num, CSIZE);
       if (fluidSim) {
-        fluidSim.scene = newScene;
+        fluidSim.setScene(newScene);
       }
       return newScene;
     }
   );
 
   const fluidCanvas = new Canvas(rootElement, CSIZE);
-  const fluidSim = new FluidSim(
-    initialScene,
-    fluidCanvas.context,
-    startRunloop
-  );
+  const fluidSim = new FluidSim(initialScene, fluidCanvas.context);
   fluidCanvas.setListener(fluidSim);
   return fluidSim;
 }

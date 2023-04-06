@@ -1,16 +1,10 @@
 import { createFluidSim } from './FluidSim';
 
 const INITIAL_SCENE = 1;
+
 const fluidSim = createFluidSim(
   INITIAL_SCENE,
-  document.getElementById('myCanvas') as HTMLCanvasElement,
-  update
+  document.getElementById('myCanvas') as HTMLCanvasElement
 );
 
-function update() {
-  if (!fluidSim.scene.paused) {
-    fluidSim.update();
-    requestAnimationFrame(update);
-  }
-}
-update();
+fluidSim.update();

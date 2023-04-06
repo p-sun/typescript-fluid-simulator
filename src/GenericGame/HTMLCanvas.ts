@@ -11,7 +11,7 @@ import {
   CanvasMouseEvent,
 } from './ICanvas';
 
-export default class HTMLCanvas implements ICanvas {
+export default class HTMLCanvasOld implements ICanvas {
   #context: CanvasRenderingContext2D;
   #size: Vec2;
   #canvasElement: HTMLCanvasElement;
@@ -42,10 +42,10 @@ export default class HTMLCanvas implements ICanvas {
   static createInRootElement(
     rootElement: Element,
     size: Vec2 = Vec2.zero
-  ): HTMLCanvas {
+  ): HTMLCanvasOld {
     const canvasElement = document.createElement('canvas') as HTMLCanvasElement;
     rootElement.appendChild(canvasElement);
-    return new HTMLCanvas(canvasElement, size);
+    return new HTMLCanvasOld(canvasElement, size);
   }
 
   get midpoint(): Vec2 {

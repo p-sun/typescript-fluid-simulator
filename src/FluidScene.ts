@@ -32,7 +32,7 @@ function makeFluid(numY: number, canvasSize: Vec2) {
 export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
   const res = sceneNr == 0 ? 50 : sceneNr == 3 ? 200 : 100;
 
-  let scene: Scene = {
+  const scene: Scene = {
     gravity: -9.81,
     dt: 1.0 / 120.0,
     numIters: 100,
@@ -59,14 +59,13 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
   scene.numIters = 40;
 
   const f = scene.fluid;
-
-  var n = f.numY;
+  const n = f.numY;
 
   if (sceneNr == 0) {
     // tank
-    for (var i = 0; i < f.numX; i++) {
-      for (var j = 0; j < f.numY; j++) {
-        var s = 1.0; // fluid
+    for (let i = 0; i < f.numX; i++) {
+      for (let j = 0; j < f.numY; j++) {
+        let s = 1.0; // fluid
         if (i == 0 || i == f.numX - 1 || j == 0) s = 0.0; // solid
         f.s[i * n + j] = s;
       }
@@ -78,10 +77,10 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     scene.showVelocities = false;
   } else if (sceneNr == 1 || sceneNr == 3) {
     // vortex shedding
-    var inVel = 2.0;
-    for (var i = 0; i < f.numX; i++) {
-      for (var j = 0; j < f.numY; j++) {
-        var s = 1.0; // fluid
+    const inVel = 2.0;
+    for (let i = 0; i < f.numX; i++) {
+      for (let j = 0; j < f.numY; j++) {
+        let s = 1.0; // fluid
         if (i == 0 || j == 0 || j == f.numY - 1) s = 0.0; // solid
         f.s[i * n + j] = s;
 
@@ -91,11 +90,11 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
       }
     }
 
-    var pipeH = 0.1 * f.numY;
-    var minJ = Math.floor(0.5 * f.numY - 0.5 * pipeH);
-    var maxJ = Math.floor(0.5 * f.numY + 0.5 * pipeH);
+    const pipeH = 0.1 * f.numY;
+    const minJ = Math.floor(0.5 * f.numY - 0.5 * pipeH);
+    const maxJ = Math.floor(0.5 * f.numY + 0.5 * pipeH);
 
-    for (var j = minJ; j < maxJ; j++) f.m[j] = 0.0;
+    for (let j = minJ; j < maxJ; j++) f.m[j] = 0.0;
 
     setObstacle(scene, 0.4, 0.5, true);
 
@@ -140,10 +139,9 @@ export function setObstacle(
 
   scene.obstacleX = x;
   scene.obstacleY = y;
-  let r = scene.obstacleRadius;
-  let f = scene.fluid;
-  let n = f.numY;
-  let cd = Math.sqrt(2) * f.h;
+  const r = scene.obstacleRadius;
+  const f = scene.fluid;
+  const n = f.numY;
 
   for (let i = 1; i < f.numX - 2; i++) {
     for (let j = 1; j < f.numY - 2; j++) {

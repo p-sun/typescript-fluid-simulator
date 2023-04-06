@@ -2,8 +2,6 @@ import { Scene } from './FluidScene';
 
 export type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
 
-let cnt = 0;
-
 export class Fluid {
   density: number;
 
@@ -88,30 +86,30 @@ export class Fluid {
   }
 
   extrapolate() {
-    var n = this.numY;
-    for (var i = 0; i < this.numX; i++) {
+    let n = this.numY;
+    for (let i = 0; i < this.numX; i++) {
       this.u[i * n + 0] = this.u[i * n + 1];
       this.u[i * n + this.numY - 1] = this.u[i * n + this.numY - 2];
     }
-    for (var j = 0; j < this.numY; j++) {
+    for (let j = 0; j < this.numY; j++) {
       this.v[0 * n + j] = this.v[1 * n + j];
       this.v[(this.numX - 1) * n + j] = this.v[(this.numX - 2) * n + j];
     }
   }
 
   sampleField(x: number, y: number, field: Field) {
-    var n = this.numY;
-    var h = this.h;
-    var h1 = 1.0 / h;
-    var h2 = 0.5 * h;
+    let n = this.numY;
+    let h = this.h;
+    let h1 = 1.0 / h;
+    let h2 = 0.5 * h;
 
     x = Math.max(Math.min(x, this.numX * h), h);
     y = Math.max(Math.min(y, this.numY * h), h);
 
-    var dx = 0.0;
-    var dy = 0.0;
+    let dx = 0.0;
+    let dy = 0.0;
 
-    var f;
+    let f;
 
     switch (field) {
       case 'U_FIELD':
@@ -129,18 +127,18 @@ export class Fluid {
         break;
     }
 
-    var x0 = Math.min(Math.floor((x - dx) * h1), this.numX - 1);
-    var tx = (x - dx - x0 * h) * h1;
-    var x1 = Math.min(x0 + 1, this.numX - 1);
+    let x0 = Math.min(Math.floor((x - dx) * h1), this.numX - 1);
+    let tx = (x - dx - x0 * h) * h1;
+    let x1 = Math.min(x0 + 1, this.numX - 1);
 
-    var y0 = Math.min(Math.floor((y - dy) * h1), this.numY - 1);
-    var ty = (y - dy - y0 * h) * h1;
-    var y1 = Math.min(y0 + 1, this.numY - 1);
+    let y0 = Math.min(Math.floor((y - dy) * h1), this.numY - 1);
+    let ty = (y - dy - y0 * h) * h1;
+    let y1 = Math.min(y0 + 1, this.numY - 1);
 
-    var sx = 1.0 - tx;
-    var sy = 1.0 - ty;
+    let sx = 1.0 - tx;
+    let sy = 1.0 - ty;
 
-    var val =
+    let val =
       sx * sy * f[x0 * n + y0] +
       tx * sy * f[x1 * n + y0] +
       tx * ty * f[x1 * n + y1] +
@@ -150,8 +148,8 @@ export class Fluid {
   }
 
   avgU(i: number, j: number) {
-    var n = this.numY;
-    var u =
+    let n = this.numY;
+    let u =
       (this.u[i * n + j - 1] +
         this.u[i * n + j] +
         this.u[(i + 1) * n + j - 1] +
@@ -161,8 +159,8 @@ export class Fluid {
   }
 
   avgV(i: number, j: number) {
-    var n = this.numY;
-    var v =
+    let n = this.numY;
+    let v =
       (this.v[(i - 1) * n + j] +
         this.v[i * n + j] +
         this.v[(i - 1) * n + j + 1] +
@@ -175,25 +173,23 @@ export class Fluid {
     this.newU.set(this.u);
     this.newV.set(this.v);
 
-    var n = this.numY;
-    var h = this.h;
-    var h2 = 0.5 * h;
+    const n = this.numY;
+    const h = this.h;
+    const h2 = 0.5 * h;
 
-    for (var i = 1; i < this.numX; i++) {
-      for (var j = 1; j < this.numY; j++) {
-        cnt++;
-
+    for (let i = 1; i < this.numX; i++) {
+      for (let j = 1; j < this.numY; j++) {
         // u component
         if (
           this.s[i * n + j] != 0.0 &&
           this.s[(i - 1) * n + j] != 0.0 &&
           j < this.numY - 1
         ) {
-          var x = i * h;
-          var y = j * h + h2;
-          var u = this.u[i * n + j];
-          var v = this.avgV(i, j);
-          //						var v = this.sampleField(x,y, 'V_FIELD');
+          let x = i * h;
+          let y = j * h + h2;
+          let u = this.u[i * n + j];
+          let v = this.avgV(i, j);
+          //						let v = this.sampleField(x,y, 'V_FIELD');
           x = x - dt * u;
           y = y - dt * v;
           u = this.sampleField(x, y, 'U_FIELD');
@@ -205,11 +201,11 @@ export class Fluid {
           this.s[i * n + j - 1] != 0.0 &&
           i < this.numX - 1
         ) {
-          var x = i * h + h2;
-          var y = j * h;
-          var u = this.avgU(i, j);
-          //						var u = this.sampleField(x,y, 'U_FIELD');
-          var v = this.v[i * n + j];
+          let x = i * h + h2;
+          let y = j * h;
+          let u = this.avgU(i, j);
+          //						let u = this.sampleField(x,y, 'U_FIELD');
+          let v = this.v[i * n + j];
           x = x - dt * u;
           y = y - dt * v;
           v = this.sampleField(x, y, 'V_FIELD');
@@ -225,17 +221,17 @@ export class Fluid {
   advectSmoke(dt: number) {
     this.newM.set(this.m);
 
-    var n = this.numY;
-    var h = this.h;
-    var h2 = 0.5 * h;
+    const n = this.numY;
+    const h = this.h;
+    const h2 = 0.5 * h;
 
-    for (var i = 1; i < this.numX - 1; i++) {
-      for (var j = 1; j < this.numY - 1; j++) {
+    for (let i = 1; i < this.numX - 1; i++) {
+      for (let j = 1; j < this.numY - 1; j++) {
         if (this.s[i * n + j] != 0.0) {
-          var u = (this.u[i * n + j] + this.u[(i + 1) * n + j]) * 0.5;
-          var v = (this.v[i * n + j] + this.v[i * n + j + 1]) * 0.5;
-          var x = i * h + h2 - dt * u;
-          var y = j * h + h2 - dt * v;
+          let u = (this.u[i * n + j] + this.u[(i + 1) * n + j]) * 0.5;
+          let v = (this.v[i * n + j] + this.v[i * n + j + 1]) * 0.5;
+          let x = i * h + h2 - dt * u;
+          let y = j * h + h2 - dt * v;
 
           this.newM[i * n + j] = this.sampleField(x, y, 'S_FIELD');
         }

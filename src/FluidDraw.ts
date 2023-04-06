@@ -63,7 +63,7 @@ export function draw(scene: Scene, c: CanvasRenderingContext2D) {
         color[0] = 255 * s;
         color[1] = 255 * s;
         color[2] = 255 * s;
-        if (scene.sceneNr == 2) color = getSciColor(s, 0.0, 1.0);
+        if (scene.choice === 'Paint Tunnel') color = getSciColor(s, 0.0, 1.0);
       } else if (f.s[i * n + j] == 0.0) {
         color[0] = 0;
         color[1] = 0;

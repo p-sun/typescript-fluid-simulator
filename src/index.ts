@@ -1,9 +1,7 @@
 import { createFluidSim } from './FluidSim';
 
-const INITIAL_SCENE = 1;
-
 const fluidSim = createFluidSim(
-  INITIAL_SCENE,
+  'Paint Tunnel',
   document.getElementById('myCanvas') as HTMLCanvasElement
 );
 

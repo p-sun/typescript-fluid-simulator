@@ -11,7 +11,7 @@ export type Scene = {
   obstacleY: number;
   obstacleRadius: number;
   paused: boolean;
-  sceneNr: number;
+  choice: SceneChoice;
   showObstacle: boolean;
   showStreamlines: boolean;
   showVelocities: boolean;
@@ -19,6 +19,12 @@ export type Scene = {
   showSmoke: boolean;
   fluid: FluidPhysics;
 };
+
+export type SceneChoice =
+  | 'Wind Tunnel'
+  | 'Paint Tunnel'
+  | 'Tank Tunnel'
+  | 'Hires Tunnel';
 
 function makeFluidPhysics(numY: number, canvasSize: Vec2) {
   const domainHeight = 1.0;
@@ -29,8 +35,9 @@ function makeFluidPhysics(numY: number, canvasSize: Vec2) {
   return new FluidPhysics(density, numX, numY, h);
 }
 
-export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
-  const resolution = sceneNr == 0 ? 50 : sceneNr == 3 ? 200 : 100;
+export function getSceneConfig(choice: SceneChoice, canvasSize: Vec2): Scene {
+  const resolution =
+    choice === 'Tank Tunnel' ? 50 : choice === 'Hires Tunnel' ? 200 : 100;
 
   const scene: Scene = {
     gravity: -9.81,
@@ -42,7 +49,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     obstacleY: 0.0,
     obstacleRadius: 0.15,
     paused: false,
-    sceneNr: 0,
+    choice: 'Tank Tunnel',
     showObstacle: true,
     showStreamlines: false,
     showVelocities: false,
@@ -51,7 +58,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     fluid: makeFluidPhysics(resolution, canvasSize),
   };
 
-  scene.sceneNr = sceneNr;
+  scene.choice = choice;
   scene.obstacleRadius = 0.15;
   scene.overRelaxation = 1.9;
 
@@ -61,7 +68,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
   const f = scene.fluid;
   const n = f.numY;
 
-  if (sceneNr == 0) {
+  if (choice === 'Tank Tunnel') {
     // tank
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
@@ -75,7 +82,7 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     scene.showSmoke = false;
     scene.showStreamlines = false;
     scene.showVelocities = false;
-  } else if (sceneNr == 1 || sceneNr == 3) {
+  } else if (choice === 'Wind Tunnel' || choice === 'Hires Tunnel') {
     // vortex shedding
     const inVel = 2.0;
     for (let i = 0; i < f.numX; i++) {
@@ -104,12 +111,12 @@ export function getSceneConfig(sceneNr: number, canvasSize: Vec2): Scene {
     scene.showStreamlines = false;
     scene.showVelocities = false;
 
-    if (sceneNr == 3) {
+    if (choice === 'Hires Tunnel') {
       scene.dt = 1.0 / 120.0;
       scene.numIters = 100;
       scene.showPressure = true;
     }
-  } else if (sceneNr == 2) {
+  } else if (choice === 'Paint Tunnel') {
     // paint
     scene.gravity = 0.0;
     scene.overRelaxation = 1.0;
@@ -152,7 +159,7 @@ export function setObstacle(
 
       if (dx * dx + dy * dy < r * r) {
         f.s[i * n + j] = 0.0;
-        if (scene.sceneNr == 2) {
+        if (scene.choice === 'Paint Tunnel') {
           f.m[i * n + j] = 0.5 + 0.5 * Math.sin(0.1 * scene.frameNr);
         } else {
           f.m[i * n + j] = 1.0;

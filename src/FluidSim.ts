@@ -1,7 +1,7 @@
 import { Canvas, CanvasListener } from './Canvas';
 import { CSIZE, draw } from './FluidDraw';
 import { appendHTMLButtons } from './FluidHTMLButtons';
-import { getSceneConfig, Scene, setObstacle } from './FluidScene';
+import { getSceneConfig, Scene, SceneChoice, setObstacle } from './FluidScene';
 
 export class FluidSim implements CanvasListener {
   private scene: Scene;
@@ -71,14 +71,14 @@ export class FluidSim implements CanvasListener {
 }
 
 export function createFluidSim(
-  sceneNum: number,
+  choice: SceneChoice,
   rootElement: HTMLCanvasElement
 ) {
   const initialScene = appendHTMLButtons(
-    sceneNum,
+    choice,
     document.body,
-    (num: number) => {
-      const newScene = getSceneConfig(num, CSIZE);
+    (choice: SceneChoice) => {
+      const newScene = getSceneConfig(choice, CSIZE);
       if (fluidSim) {
         fluidSim.setScene(newScene);
       }

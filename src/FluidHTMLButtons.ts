@@ -1,15 +1,15 @@
-import { Scene } from './FluidScene';
+import { Scene, SceneChoice } from './FluidScene';
 
 export function appendHTMLButtons(
-  initialNum: number,
+  sceneChoice: SceneChoice,
   rootElement: HTMLElement,
-  getSceneConfig: (num: number) => Scene
+  getSceneConfig: (choice: SceneChoice) => Scene
 ) {
   const inputDiv = document.createElement('inputDiv') as HTMLCanvasElement;
   rootElement.append(inputDiv);
-  const initialScene = getSceneConfig(initialNum);
-  const setupScene = (num: number) => {
-    const scene = getSceneConfig(num);
+  const initialScene = getSceneConfig(sceneChoice);
+  const setupScene = (choice: SceneChoice) => {
+    const scene = getSceneConfig(choice);
     inputDiv.innerHTML = '';
     appendButtonsForScene(inputDiv, scene, setupScene);
     return scene;
@@ -21,7 +21,7 @@ export function appendHTMLButtons(
 function appendButtonsForScene(
   root: HTMLElement,
   scene: Scene,
-  setupScene: (num: number) => void
+  setupScene: (choice: SceneChoice) => void
 ) {
   const inputs = createInputs(scene, setupScene);
   root.append(
@@ -47,7 +47,7 @@ function appendButtonsForScene(
   );
 }
 
-function createInputs(scene: Scene, setupScene: (num: number) => void) {
+function createInputs(scene: Scene, setupScene: (choice: SceneChoice) => void) {
   function updateInputs() {
     inputs.checkboxes.stream.checked = scene.showStreamlines;
     inputs.checkboxes.velocity.checked = scene.showVelocities;
@@ -65,19 +65,19 @@ function createInputs(scene: Scene, setupScene: (num: number) => void) {
     }),
     buttons: [
       createButton('Wind Tunnel', () => {
-        setupScene(1);
+        setupScene('Wind Tunnel');
         updateInputs();
       }),
       createButton('Paint Tunnel', () => {
-        setupScene(2);
+        setupScene('Paint Tunnel');
         updateInputs();
       }),
       createButton('Tank Tunnel', () => {
-        setupScene(0);
+        setupScene('Tank Tunnel');
         updateInputs();
       }),
       createButton('Hires Tunnel', () => {
-        setupScene(3);
+        setupScene('Hires Tunnel');
         updateInputs();
       }),
     ],

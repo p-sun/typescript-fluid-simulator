@@ -11,15 +11,15 @@ export class FluidPhysics {
   numCells: number; // Total number of cells
   h: number; // Height of each cell
 
-  // Per Pixel
-  u: Float32Array;
-  v: Float32Array;
-  newU: Float32Array;
-  newV: Float32Array;
-  p: Float32Array;
-  s: Float32Array;
-  m: Float32Array;
-  newM: Float32Array;
+  // Grid Fields
+  u: Float32Array; // Horizontal velocity
+  v: Float32Array; // Vertical velocity
+  newU: Float32Array; // Buffer for horizontal velocity
+  newV: Float32Array; // Buffer for horizontal velocity
+  p: Float32Array; // Pressure
+  s: Float32Array; // Obstacle. 0 = obstacle, 1 = fluid
+  m: Float32Array; // Smoke density
+  newM: Float32Array; // Buffer for smoke density
 
   constructor(density: number, numX: number, numY: number, h: number) {
     this.density = density;
@@ -39,7 +39,7 @@ export class FluidPhysics {
   }
 
   integrate(dt: number, gravity: number) {
-    let n = this.numY;
+    const n = this.numY;
     for (let i = 1; i < this.numX; i++) {
       for (let j = 1; j < this.numY - 1; j++) {
         if (this.s[i * n + j] != 0.0 && this.s[i * n + j - 1] != 0.0)
@@ -49,37 +49,44 @@ export class FluidPhysics {
   }
 
   solveIncompressibility(scene: Scene, numIters: number, dt: number) {
-    let n = this.numY;
-    let cp = (this.density * this.h) / dt;
+    const n = this.numY;
+    const cp = (this.density * this.h) / dt;
 
     for (let iter = 0; iter < numIters; iter++) {
       for (let i = 1; i < this.numX - 1; i++) {
         for (let j = 1; j < this.numY - 1; j++) {
           if (this.s[i * n + j] == 0.0) continue;
 
-          let s = this.s[i * n + j];
+          // s - # of NSEW obstacles
+          // s_ij is 0 for obstacle, 1 for fluid
           const sx0 = this.s[(i - 1) * n + j];
           const sx1 = this.s[(i + 1) * n + j];
           const sy0 = this.s[i * n + j - 1];
           const sy1 = this.s[i * n + j + 1];
-
-          s = sx0 + sx1 + sy0 + sy1;
+          const s = sx0 + sx1 + sy0 + sy1;
           if (s == 0.0) continue;
 
-          let div =
+          // div - Total divergence of NSEW velocities
+          // Note indicies are different from s,
+          // b/c u & v are on the edges of each grid cell
+          const div =
             this.u[(i + 1) * n + j] -
             this.u[i * n + j] +
             this.v[i * n + j + 1] -
             this.v[i * n + j];
 
-          let p = -div / s;
-          p *= scene.overRelaxation;
-          this.p[i * n + j] += cp * p;
+          // dDiv - Average divergence of non-obstacle NSEW cells
+          const dDiv = (-div / s) * scene.overRelaxation;
 
-          this.u[i * n + j] -= sx0 * p;
-          this.u[(i + 1) * n + j] += sx1 * p;
-          this.v[i * n + j] -= sy0 * p;
-          this.v[i * n + j + 1] += sy1 * p;
+          // u, v - Velocity
+          // Note that if s_ij is an obstacle, its velocity doesn't change.
+          this.u[i * n + j] -= sx0 * dDiv;
+          this.u[(i + 1) * n + j] += sx1 * dDiv;
+          this.v[i * n + j] -= sy0 * dDiv;
+          this.v[i * n + j + 1] += sy1 * dDiv;
+
+          // p - Pressure. Not needed for simulation.
+          this.p[i * n + j] += cp * dDiv;
         }
       }
     }
@@ -88,20 +95,25 @@ export class FluidPhysics {
   extrapolate() {
     let n = this.numY;
     for (let i = 0; i < this.numX; i++) {
+      // 0th col = 1st col
       this.u[i * n + 0] = this.u[i * n + 1];
+      // last col = 2nd last col
       this.u[i * n + this.numY - 1] = this.u[i * n + this.numY - 2];
     }
     for (let j = 0; j < this.numY; j++) {
+      // 0th row = 1st row
       this.v[0 * n + j] = this.v[1 * n + j];
+      // last row = 2nd last row
       this.v[(this.numX - 1) * n + j] = this.v[(this.numX - 2) * n + j];
     }
   }
 
+  // Average weighted velocity at position (x, y)
   sampleField(x: number, y: number, field: Field) {
-    let n = this.numY;
-    let h = this.h;
-    let h1 = 1.0 / h;
-    let h2 = 0.5 * h;
+    const n = this.numY;
+    const h = this.h;
+    const h1 = 1.0 / h;
+    const h2 = 0.5 * h;
 
     x = Math.max(Math.min(x, this.numX * h), h);
     y = Math.max(Math.min(y, this.numY * h), h);
@@ -127,18 +139,18 @@ export class FluidPhysics {
         break;
     }
 
-    let x0 = Math.min(Math.floor((x - dx) * h1), this.numX - 1);
-    let tx = (x - dx - x0 * h) * h1;
-    let x1 = Math.min(x0 + 1, this.numX - 1);
+    const x0 = Math.min(Math.floor((x - dx) * h1), this.numX - 1);
+    const tx = (x - dx - x0 * h) * h1;
+    const x1 = Math.min(x0 + 1, this.numX - 1);
 
-    let y0 = Math.min(Math.floor((y - dy) * h1), this.numY - 1);
-    let ty = (y - dy - y0 * h) * h1;
-    let y1 = Math.min(y0 + 1, this.numY - 1);
+    const y0 = Math.min(Math.floor((y - dy) * h1), this.numY - 1);
+    const ty = (y - dy - y0 * h) * h1;
+    const y1 = Math.min(y0 + 1, this.numY - 1);
 
-    let sx = 1.0 - tx;
-    let sy = 1.0 - ty;
+    const sx = 1.0 - tx;
+    const sy = 1.0 - ty;
 
-    let val =
+    const val =
       sx * sy * f[x0 * n + y0] +
       tx * sy * f[x1 * n + y0] +
       tx * ty * f[x1 * n + y1] +
@@ -147,9 +159,10 @@ export class FluidPhysics {
     return val;
   }
 
+  // Average horizontal velocity at index (i, j)
   avgU(i: number, j: number) {
-    let n = this.numY;
-    let u =
+    const n = this.numY;
+    const u =
       (this.u[i * n + j - 1] +
         this.u[i * n + j] +
         this.u[(i + 1) * n + j - 1] +
@@ -158,9 +171,10 @@ export class FluidPhysics {
     return u;
   }
 
+  // Average vertical velocity at index (i, j)
   avgV(i: number, j: number) {
-    let n = this.numY;
-    let v =
+    const n = this.numY;
+    const v =
       (this.v[(i - 1) * n + j] +
         this.v[i * n + j] +
         this.v[(i - 1) * n + j + 1] +
@@ -169,6 +183,8 @@ export class FluidPhysics {
     return v;
   }
 
+  // Set velocity to be the predicted velocity of a particle dt time
+  // in the past, calculated by averaging neighbouring velocities.
   advectVel(dt: number) {
     this.newU.set(this.u);
     this.newV.set(this.v);
@@ -179,37 +195,43 @@ export class FluidPhysics {
 
     for (let i = 1; i < this.numX; i++) {
       for (let j = 1; j < this.numY; j++) {
-        // u component
+        // u component (horizontal) -----------
         if (
           this.s[i * n + j] != 0.0 &&
           this.s[(i - 1) * n + j] != 0.0 &&
           j < this.numY - 1
         ) {
-          let x = i * h;
-          let y = j * h + h2;
-          let u = this.u[i * n + j];
-          let v = this.avgV(i, j);
-          //						let v = this.sampleField(x,y, 'V_FIELD');
-          x = x - dt * u;
-          y = y - dt * v;
-          u = this.sampleField(x, y, 'U_FIELD');
-          this.newU[i * n + j] = u;
+          // position at index i,j
+          const x = i * h;
+          const y = j * h + h2;
+
+          // velocity at index i,j
+          const u = this.u[i * n + j];
+          const v = this.avgV(i, j); // similar to this.sampleField(x, y, 'V_FIELD');
+
+          // previous position, dt time ago
+          const x0 = x - dt * u;
+          const y0 = y - dt * v;
+
+          //  weighted average of velocity at prev position
+          const u0 = this.sampleField(x0, y0, 'U_FIELD');
+          this.newU[i * n + j] = u0;
         }
-        // v component
+        // v component (vertical) -----------
+        // Same as above, but for v instead of u
         if (
           this.s[i * n + j] != 0.0 &&
           this.s[i * n + j - 1] != 0.0 &&
           i < this.numX - 1
         ) {
-          let x = i * h + h2;
-          let y = j * h;
-          let u = this.avgU(i, j);
-          //						let u = this.sampleField(x,y, 'U_FIELD');
-          let v = this.v[i * n + j];
-          x = x - dt * u;
-          y = y - dt * v;
-          v = this.sampleField(x, y, 'V_FIELD');
-          this.newV[i * n + j] = v;
+          const x = i * h + h2;
+          const y = j * h;
+          const u = this.avgU(i, j); // similar to this.sampleField(x, y, 'U_FIELD');
+          const v = this.v[i * n + j];
+          const x0 = x - dt * u;
+          const y0 = y - dt * v;
+          const v0 = this.sampleField(x0, y0, 'V_FIELD');
+          this.newV[i * n + j] = v0;
         }
       }
     }
@@ -218,6 +240,8 @@ export class FluidPhysics {
     this.v.set(this.newV);
   }
 
+  // Similar to advectVel, but for smoke density.
+  // Averages neighbouring smoke densities to get new density.
   advectSmoke(dt: number) {
     this.newM.set(this.m);
 
@@ -228,10 +252,10 @@ export class FluidPhysics {
     for (let i = 1; i < this.numX - 1; i++) {
       for (let j = 1; j < this.numY - 1; j++) {
         if (this.s[i * n + j] != 0.0) {
-          let u = (this.u[i * n + j] + this.u[(i + 1) * n + j]) * 0.5;
-          let v = (this.v[i * n + j] + this.v[i * n + j + 1]) * 0.5;
-          let x = i * h + h2 - dt * u;
-          let y = j * h + h2 - dt * v;
+          const u = (this.u[i * n + j] + this.u[(i + 1) * n + j]) * 0.5;
+          const v = (this.v[i * n + j] + this.v[i * n + j + 1]) * 0.5;
+          const x = i * h + h2 - dt * u;
+          const y = j * h + h2 - dt * v;
 
           this.newM[i * n + j] = this.sampleField(x, y, 'S_FIELD');
         }

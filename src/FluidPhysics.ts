@@ -48,6 +48,22 @@ export class FluidPhysics {
     }
   }
 
+  extrapolate() {
+    let n = this.numY;
+    for (let i = 0; i < this.numX; i++) {
+      // 0th col = 1st col
+      this.u[i * n + 0] = this.u[i * n + 1];
+      // last col = 2nd last col
+      this.u[i * n + this.numY - 1] = this.u[i * n + this.numY - 2];
+    }
+    for (let j = 0; j < this.numY; j++) {
+      // 0th row = 1st row
+      this.v[0 * n + j] = this.v[1 * n + j];
+      // last row = 2nd last row
+      this.v[(this.numX - 1) * n + j] = this.v[(this.numX - 2) * n + j];
+    }
+  }
+
   solveIncompressibility(scene: Scene, numIters: number, dt: number) {
     const n = this.numY;
     const cp = (this.density * this.h) / dt;
@@ -89,22 +105,6 @@ export class FluidPhysics {
           this.p[i * n + j] += cp * dDiv;
         }
       }
-    }
-  }
-
-  extrapolate() {
-    let n = this.numY;
-    for (let i = 0; i < this.numX; i++) {
-      // 0th col = 1st col
-      this.u[i * n + 0] = this.u[i * n + 1];
-      // last col = 2nd last col
-      this.u[i * n + this.numY - 1] = this.u[i * n + this.numY - 2];
-    }
-    for (let j = 0; j < this.numY; j++) {
-      // 0th row = 1st row
-      this.v[0 * n + j] = this.v[1 * n + j];
-      // last row = 2nd last row
-      this.v[(this.numX - 1) * n + j] = this.v[(this.numX - 2) * n + j];
     }
   }
 

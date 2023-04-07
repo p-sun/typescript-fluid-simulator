@@ -80,6 +80,8 @@ export class FluidSim implements CanvasListener {
 
 // Can't go inside of createFluidSim, to make it work with StackBlitz.
 let fluidSim: FluidSim | undefined;
+// Cache the resolution override, so that we can keep it when switching tunnels.
+let cachedResOverride = 0;
 
 export function createFluidSim(options: {
   initialTunnel: TunnelType;
@@ -93,8 +95,9 @@ export function createFluidSim(options: {
   const initialScene = appendHTMLButtons(
     initialTunnel,
     buttonsElement,
-    (tunnel: TunnelType, resolutionOverride: number) => {
-      const newScene = getSceneConfig(tunnel, CSIZE, resolutionOverride);
+    (tunnel: TunnelType, resOverride: number) => {
+      cachedResOverride = resOverride > 0 ? resOverride : cachedResOverride;
+      const newScene = getSceneConfig(tunnel, CSIZE, cachedResOverride);
       if (fluidSim) {
         fluidSim.setScene(newScene);
       }

@@ -60,14 +60,9 @@ export class Canvas {
   }
 
   private setupListeners() {
-    const getPos = (e: MouseEvent) => {
+    const getPos = (clientX: number, clientY: number) => {
       const rect = this.#canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.x, y: e.clientY - rect.y };
-    };
-
-    const getTouchPos = (e: Touch) => {
-      const rect = this.#canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.x, y: e.clientY - rect.y };
+      return { x: clientX - rect.x, y: clientY - rect.y };
     };
 
     document.addEventListener('keydown', (event) => {
@@ -82,7 +77,7 @@ export class Canvas {
     });
 
     this.#canvas.addEventListener('mousedown', (e) => {
-      const { x, y } = getPos(e);
+      const { x, y } = getPos(e.clientX, e.clientY);
       this.#listener?.startDrag(x, y);
     });
 
@@ -91,12 +86,12 @@ export class Canvas {
     });
 
     this.#canvas.addEventListener('mousemove', (e) => {
-      const { x, y } = getPos(e);
+      const { x, y } = getPos(e.clientX, e.clientY);
       this.#listener?.drag(x, y);
     });
 
     this.#canvas.addEventListener('touchstart', (e) => {
-      const { x, y } = getTouchPos(e.touches[0]);
+      const { x, y } = getPos(e.touches[0].clientX, e.touches[0].clientY);
       this.#listener?.startDrag(x, y);
     });
 
@@ -109,7 +104,7 @@ export class Canvas {
       (e) => {
         e.preventDefault();
         e.stopImmediatePropagation();
-        const { x, y } = getTouchPos(e.touches[0]);
+        const { x, y } = getPos(e.touches[0].clientX, e.touches[0].clientY);
         this.#listener?.drag(x, y);
       },
       { passive: false }

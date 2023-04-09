@@ -31,8 +31,8 @@ export class HTMLSlider {
     slider.type = 'range';
     slider.min = options.min.toString();
     slider.max = options.max.toString();
-    slider.value = options.initialValue.toString();
     slider.step = options.stepSize?.toString() ?? 'any';
+    slider.value = options.initialValue.toString();
     return slider;
   }
 
@@ -53,7 +53,7 @@ export class HTMLSlider {
     container.style.backgroundColor = '#cfcfcf';
     container.style.padding = '4px';
     container.style.borderRadius = '4px';
-    container.style.margin = '4px';
+    container.style.marginBottom = '4px';
 
     if (options.label) {
       const label = document.createElement('div');

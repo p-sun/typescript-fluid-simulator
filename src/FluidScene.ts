@@ -81,29 +81,28 @@ export function getSceneConfig(
   if (tunnel === 'Tank Tunnel') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
-        let s = 1.0; // fluid
-        if (i == 0 || i == f.numX - 1 || j == 0) s = 0.0; // solid
-        f.s[i * n + j] = s;
+        const isSolid = i == 0 || i == f.numX - 1 || j == 0; // Left, right, bottom wall
+        f.s[i * n + j] = isSolid ? 0 : 1;
       }
     }
+
     scene.gravity = -9.81;
     scene.showPressure = true;
     scene.showSmoke = false;
     scene.showStreamlines = false;
     scene.showVelocities = false;
   } else if (tunnel === 'Wind Tunnel' || tunnel === 'HiRes Tunnel') {
-    // vortex shedding
-    const inVel = 2.0;
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
-        let s = 1.0; // fluid
-        if (i == 0 || j == 0 || j == f.numY - 1) s = 0.0; // solid
-        f.s[i * n + j] = s;
-
-        if (i == 1) {
-          f.u[i * n + j] = inVel;
-        }
+        const isSolid = i == 0 || j == 0 || j == f.numY - 1; // Left, bottom, top wall
+        f.s[i * n + j] = isSolid ? 0 : 1;
       }
+    }
+
+    // vortex shedding
+    const inVel = 2;
+    for (let j = 0; j < f.numY; j++) {
+      f.u[1 * n + j] = inVel;
     }
 
     const pipeH = 0.1 * f.numY;

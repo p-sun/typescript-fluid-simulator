@@ -54,14 +54,14 @@ export class FluidSim implements CanvasListener {
     this.mouseDown = false;
   }
 
-  private pausePressed() {
+  pausePressed() {
     this.scene.paused = !this.scene.paused;
     if (!this.scene.paused) {
       this.update();
     }
   }
 
-  private step() {
+  step() {
     this.scene.paused = false;
     this.simulate();
     draw(this.scene, this.context);
@@ -108,5 +108,5 @@ export function createFluidSim(options: {
   const fluidCanvas = new Canvas(canvas, CSIZE);
   fluidSim = new FluidSim(initialScene, fluidCanvas.context);
   fluidCanvas.setListener(fluidSim);
-  fluidSim.update();
+  return fluidSim;
 }

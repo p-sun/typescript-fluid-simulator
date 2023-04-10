@@ -1,7 +1,9 @@
 import { createFluidSim } from './src/FluidSim';
 
-createFluidSim({
-  initialTunnel: 'Paint Tunnel',
+const fluidSim = createFluidSim({
+  initialTunnel: 'Wind Tunnel',
   canvasDomId: 'myCanvas',
   buttonsDomId: 'inputButtons',
 });
+
+fluidSim.update();

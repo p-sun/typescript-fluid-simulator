@@ -99,17 +99,17 @@ export function getSceneConfig(
       }
     }
 
-    // vortex shedding
+    // Vortex shedding. Set horizontal velocity at column i = 1. i = 0 is left wall.
     const inVel = 2;
     for (let j = 0; j < f.numY; j++) {
       f.u[1 * n + j] = inVel;
     }
 
+    // Short vertical column of black smoke at i = 0
     const pipeH = 0.1 * f.numY;
     const minJ = Math.floor(0.5 * f.numY - 0.5 * pipeH);
     const maxJ = Math.floor(0.5 * f.numY + 0.5 * pipeH);
-
-    for (let j = minJ; j < maxJ; j++) f.m[j] = 0.0;
+    for (let j = minJ; j < maxJ; j++) f.m[j] = 0; // Black smoke = 0
 
     setObstacle(scene, 0.4, 0.5, true);
 
@@ -157,20 +157,28 @@ export function setObstacle(
   const f = scene.fluid;
   const n = f.numY;
 
+  // For all cells except the 4 sides
   for (let i = 1; i < f.numX - 2; i++) {
     for (let j = 1; j < f.numY - 2; j++) {
+      // Set to fluid
       f.s[i * n + j] = 1.0;
 
       const dx = (i + 0.5) * f.h - x;
       const dy = (j + 0.5) * f.h - y;
-
+      // If cell is inside obstacle:
       if (dx * dx + dy * dy < r * r) {
+        // Set cell to solid
         f.s[i * n + j] = 0.0;
+
         if (scene.tunnel === 'Paint Tunnel') {
+          // Set smoke to # based on time, between 0 & 1 inclusive
           f.m[i * n + j] = 0.5 + 0.5 * Math.sin(0.1 * scene.frameNr);
         } else {
+          // Set smoke to white
           f.m[i * n + j] = 1.0;
         }
+
+        // New velocity is how fast the obstacle moved since last frame
         f.u[i * n + j] = vx;
         f.u[(i + 1) * n + j] = vx;
         f.v[i * n + j] = vy;

@@ -107,7 +107,7 @@ function createInputs(scene: Scene, setupScene: SetupSceneFn) {
       {
         initialValue: scene.fluid.numY,
         min: 10,
-        max: 100,
+        max: 200,
         stepSize: 10,
         label: 'Resolution',
         callbackOnlyOnPointerUp: true,

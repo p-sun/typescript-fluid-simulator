@@ -17,8 +17,8 @@ export class FluidPhysics {
   newU: Float32Array; // Buffer for horizontal velocity
   newV: Float32Array; // Buffer for horizontal velocity
   p: Float32Array; // Pressure
-  s: Float32Array; // Obstacle. 0 = obstacle, 1 = fluid
-  m: Float32Array; // Smoke density
+  s: Float32Array; // Solidness. 0 = solid, 1 = fluid
+  m: Float32Array; // Smoke density. 0 = black, 1 = white
   newM: Float32Array; // Buffer for smoke density
 
   constructor(density: number, numX: number, numY: number, h: number) {
@@ -241,7 +241,7 @@ export class FluidPhysics {
   }
 
   // Similar to advectVel, but for smoke density.
-  // Averages neighbouring smoke densities to get new density.
+  // New density is a weighted average of neighbouring smoke densities.
   advectSmoke(dt: number) {
     this.newM.set(this.m);
 

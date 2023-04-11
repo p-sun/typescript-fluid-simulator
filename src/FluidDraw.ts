@@ -1,37 +1,40 @@
 import { Scene } from './FluidScene';
 import Vec2 from './GenericModels/Vec2';
 
-// Canvas and Canvas Context are the same size
-export const CSIZE = new Vec2(window.innerWidth - 80, window.innerHeight - 160);
-const windowScale = window.devicePixelRatio;
-const pxWidth = Math.floor(CSIZE.x * windowScale);
-const pxHeight = Math.floor(CSIZE.y * windowScale);
+function sizeTransformations(cSize: Vec2) {
+  const windowScale = window.devicePixelRatio;
+  return {
+    windowScale,
+    pxWidth: Math.floor(cSize.x * windowScale),
+    pxHeight: Math.floor(cSize.y * windowScale),
+    // Grid index --> canvas
+    gcX: (gridX: number, h: number) => {
+      return gridX * h * cSize.y;
+    },
+    gcY: (gridY: number, h: number) => {
+      return cSize.y - gridY * h * cSize.y;
+    },
+    // Simulation units --> canvas, (i.e. vertical Y is 1)
+    cX: (simulationX: number) => {
+      return simulationX * cSize.y;
+    },
+    cY: (simulationY: number) => {
+      return cSize.y - simulationY * cSize.y;
+    },
+    cL: (simulationLength: number) => {
+      return simulationLength * cSize.y;
+    },
+  };
+}
 
-// Grid index --> canvas
-function gcX(gridX: number, h: number) {
-  return gridX * h * CSIZE.y;
-}
-function gcY(gridY: number, h: number) {
-  return CSIZE.y - gridY * h * CSIZE.y;
-}
-
-// Simulation units --> canvas, (i.e. vertical Y is 1)
-function cX(simulationX: number) {
-  return simulationX * CSIZE.y;
-}
-function cY(simulationY: number) {
-  return CSIZE.y - simulationY * CSIZE.y;
-}
-function cL(simulationLength: number) {
-  return simulationLength * CSIZE.y;
-}
-
-export function draw(scene: Scene, c: CanvasRenderingContext2D) {
+export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
   const f = scene.fluid;
   const n = f.numY;
   const h = f.h;
+  const { windowScale, pxWidth, pxHeight, gcX, gcY, cX, cY, cL } =
+    sizeTransformations(cSize);
 
-  c.clearRect(0, 0, CSIZE.x, CSIZE.y);
+  c.clearRect(0, 0, cSize.x, cSize.y);
   c.fillStyle = '#FF0000';
 
   let minP = f.p[0];

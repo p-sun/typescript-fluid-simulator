@@ -1,6 +1,6 @@
 import { Canvas, CanvasListener } from './Canvas';
 import { CSIZE, draw } from './FluidDraw';
-import { appendHTMLButtons } from './FluidHTMLButtons';
+import { inputsForScene } from './FluidHTMLButtons';
 import { getSceneConfig, Scene, TunnelType, setObstacle } from './FluidScene';
 
 export class FluidSim implements CanvasListener {
@@ -78,35 +78,54 @@ export class FluidSim implements CanvasListener {
   }
 }
 
-// Can't go inside of createFluidSim, to make it work with StackBlitz.
-let fluidSim: FluidSim | undefined;
 // Cache the resolution override, so that we can keep it when switching tunnels.
-let cachedResOverride = 0;
+let cachedRes: number | undefined;
 
 export function createFluidSim(options: {
   initialTunnel: TunnelType;
   canvasDomId: string;
   buttonsDomId: string;
+  autostart: boolean;
+  resolutionOverride?: number;
 }) {
-  const { initialTunnel, canvasDomId, buttonsDomId } = options;
-  const canvas = document.getElementById(canvasDomId) as HTMLCanvasElement;
-  const buttonsElement = document.getElementById(buttonsDomId)!;
+  cachedRes = options.resolutionOverride;
+  const initialScene = getSceneConfig(options.initialTunnel, CSIZE, cachedRes);
 
-  const initialScene = appendHTMLButtons(
-    initialTunnel,
-    buttonsElement,
-    (tunnel: TunnelType, resOverride: number) => {
-      cachedResOverride = resOverride > 0 ? resOverride : cachedResOverride;
-      const newScene = getSceneConfig(tunnel, CSIZE, cachedResOverride);
-      if (fluidSim) {
-        fluidSim.setScene(newScene);
-      }
-      return newScene;
-    }
+  const fluidCanvas = new Canvas(
+    document.getElementById(options.canvasDomId) as HTMLCanvasElement,
+    CSIZE
+  );
+  const fluidSim = new FluidSim(initialScene, fluidCanvas.context);
+  fluidCanvas.setListener(fluidSim);
+
+  appendInputs(
+    document.getElementById(options.buttonsDomId)!,
+    initialScene,
+    fluidSim
   );
 
-  const fluidCanvas = new Canvas(canvas, CSIZE);
-  fluidSim = new FluidSim(initialScene, fluidCanvas.context);
-  fluidCanvas.setListener(fluidSim);
-  return fluidSim;
+  options.autostart ? fluidSim.update() : fluidSim.step();
+}
+
+function appendInputs(
+  inputDiv: HTMLElement,
+  initialScene: Scene,
+  fluidSim: FluidSim
+) {
+  const onPauseToggled = () => {
+    fluidSim.pausePressed();
+  };
+  const setDiv = (scene: Scene) => {
+    inputDiv.innerHTML = '';
+    inputDiv.append(...inputsForScene(scene, onPauseToggled, onChangeScene));
+  };
+  const onChangeScene = (tunnel: TunnelType, resOverride?: number) => {
+    cachedRes = resOverride ?? cachedRes;
+
+    const scene = getSceneConfig(tunnel, CSIZE, cachedRes);
+    setDiv(scene);
+    fluidSim.setScene(scene);
+  };
+
+  setDiv(initialScene);
 }

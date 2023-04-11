@@ -1,109 +1,54 @@
 import { Scene, TunnelType } from './FluidScene';
-import { HTMLSlider } from './HTMLSlider';
+import { createSliderWithText } from './HTMLSlider';
 
-type SetupSceneFn = (tunnel: TunnelType, numY: number) => Scene;
-
-export function appendHTMLButtons(
-  sceneChoice: TunnelType,
-  rootElement: HTMLElement,
-  getSceneConfig: SetupSceneFn
-) {
-  const inputDiv = document.createElement('inputDiv') as HTMLCanvasElement;
-  rootElement.append(inputDiv);
-  const initialScene = getSceneConfig(sceneChoice, 0);
-  const setupScene: SetupSceneFn = (tunnel, numY) => {
-    const scene = getSceneConfig(tunnel, numY);
-    inputDiv.innerHTML = '';
-    createButtonsForScene(inputDiv, scene, setupScene);
-    return scene;
-  };
-  createButtonsForScene(inputDiv, initialScene, setupScene);
-  return initialScene;
-}
-
-function createButtonsForScene(
-  root: HTMLElement,
+export function inputsForScene(
   scene: Scene,
-  setupScene: SetupSceneFn
-) {
-  const inputs = createInputs(scene, setupScene);
-  root.append(
-    //inputs.startButton,
-    ...inputs.buttons,
-    document.createElement('br'),
-    inputs.checkboxes.stream,
-    'Streamlines',
-    inputs.checkboxes.velocity,
-    'Velocity',
-    inputs.checkboxes.pressure,
-    'Pressure',
-    inputs.checkboxes.smoke,
-    'Smoke',
-    inputs.checkboxes.obstacle,
-    'Obstacle',
-    inputs.checkboxes.overRelax,
-    'Over Relaxation',
-    inputs.resolutionSlider.container,
-    document.createTextNode('Shortcuts: P - Pause/Start, M - Step')
-  );
-}
-
-function createInputs(scene: Scene, setupScene: SetupSceneFn) {
-  function updateInputs() {
-    inputs.checkboxes.stream.checked = scene.showStreamlines;
-    inputs.checkboxes.velocity.checked = scene.showVelocities;
-    inputs.checkboxes.pressure.checked = scene.showPressure;
-    inputs.checkboxes.smoke.checked = scene.showSmoke;
-    inputs.checkboxes.overRelax.checked = scene.overRelaxation > 1.0;
-    inputs.checkboxes.obstacle.checked = scene.showObstacle;
-    inputs.startButton.innerHTML = scene.paused ? 'Start' : 'Pause';
-    inputs.resolutionSlider.setValue(scene.fluid.numY);
-  }
-
-  const inputs = {
-    startButton: createButton(scene.paused ? 'Start' : 'Pause', () => {
-      scene.paused = !scene.paused;
-      updateInputs();
+  onPauseToggled: () => void,
+  onChangeScene: (tunnel: TunnelType, resOverride?: number) => void
+): (string | HTMLElement)[] {
+  return [
+    createButton('Wind Tunnel', () => {
+      onChangeScene('Wind Tunnel');
     }),
-    buttons: [
-      createButton('Wind Tunnel', () => {
-        setupScene('Wind Tunnel', 0);
-        updateInputs();
-      }),
-      createButton('Paint Tunnel', () => {
-        setupScene('Paint Tunnel', 0);
-        updateInputs();
-      }),
-      createButton('Tank Tunnel', () => {
-        setupScene('Tank Tunnel', 0);
-        updateInputs();
-      }),
-      createButton('HiRes Tunnel', () => {
-        setupScene('HiRes Tunnel', 0);
-        updateInputs();
-      }),
-    ],
-    checkboxes: {
-      stream: createCheckbox(scene.showStreamlines, () => {
-        scene.showStreamlines = !scene.showStreamlines;
-      }),
-      velocity: createCheckbox(scene.showVelocities, () => {
-        scene.showVelocities = !scene.showVelocities;
-      }),
-      pressure: createCheckbox(scene.showPressure, () => {
-        scene.showPressure = !scene.showPressure;
-      }),
-      smoke: createCheckbox(scene.showSmoke, () => {
-        scene.showSmoke = !scene.showSmoke;
-      }),
-      obstacle: createCheckbox(scene.showObstacle, () => {
-        scene.showObstacle = !scene.showObstacle;
-      }),
-      overRelax: createCheckbox(scene.overRelaxation > 1.0, () => {
-        scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;
-      }),
-    },
-    resolutionSlider: new HTMLSlider(
+    createButton('Paint Tunnel', () => {
+      onChangeScene('Paint Tunnel');
+    }),
+    createButton('Tank Tunnel', () => {
+      onChangeScene('Tank Tunnel');
+    }),
+    createButton('HiRes Tunnel', () => {
+      onChangeScene('HiRes Tunnel');
+    }),
+    createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
+      setText(!scene.paused ? 'Start' : 'Pause');
+      onPauseToggled();
+    }),
+    document.createElement('br'),
+    createCheckbox(scene.showStreamlines, () => {
+      scene.showStreamlines = !scene.showStreamlines;
+    }),
+    'Streamlines',
+    createCheckbox(scene.showVelocities, () => {
+      scene.showVelocities = !scene.showVelocities;
+    }),
+    'Velocity',
+    createCheckbox(scene.showPressure, () => {
+      scene.showPressure = !scene.showPressure;
+    }),
+    'Pressure',
+    createCheckbox(scene.showSmoke, () => {
+      scene.showSmoke = !scene.showSmoke;
+    }),
+    'Smoke',
+    createCheckbox(scene.showObstacle, () => {
+      scene.showObstacle = !scene.showObstacle;
+    }),
+    'Obstacle',
+    createCheckbox(scene.overRelaxation > 1.0, () => {
+      scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;
+    }),
+    'Over Relaxation',
+    createSliderWithText(
       {
         initialValue: scene.fluid.numY,
         min: 10,
@@ -112,29 +57,37 @@ function createInputs(scene: Scene, setupScene: SetupSceneFn) {
         label: 'Resolution',
         callbackOnlyOnPointerUp: true,
       },
-      (newValue) => {
-        setupScene(scene.tunnel, newValue);
-        updateInputs();
+      (resOverride) => {
+        onChangeScene(scene.tunnel, resOverride > 0 ? resOverride : undefined);
       }
     ),
-  };
-  return inputs;
+    `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
+  ];
 }
 
-function createButton(text: string, onclick: () => void) {
+function createButton(
+  text: string,
+  fn: (setText: (text: string) => void) => void
+) {
   let button = document.createElement('button');
   button.innerText = text;
-  button.onclick = onclick;
+
+  const setText = (text: string) => (button.innerText = text);
+  button.onclick = () => fn(setText);
+
   return button;
 }
 
 function createCheckbox(
   checked: boolean,
-  onclick: () => void
+  fn: (setChecked: (checked: boolean) => void) => void
 ): HTMLInputElement {
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.onclick = onclick;
   checkbox.checked = checked;
+
+  const setChecked = (checked: boolean) => (checkbox.checked = checked);
+  checkbox.onclick = () => fn(setChecked);
+
   return checkbox;
 }

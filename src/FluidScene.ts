@@ -38,16 +38,15 @@ function makeFluidPhysics(numY: number, canvasSize: Vec2) {
 export function getSceneConfig(
   tunnel: TunnelType,
   canvasSize: Vec2,
-  resolutionOverride: number
+  resOverride?: number
 ): Scene {
-  const resolution =
-    resolutionOverride > 0
-      ? resolutionOverride
-      : tunnel === 'Tank Tunnel'
-      ? 50
-      : tunnel === 'HiRes Tunnel'
-      ? 200
-      : 100;
+  const resolution = resOverride
+    ? resOverride
+    : tunnel === 'Tank Tunnel'
+    ? 50
+    : tunnel === 'HiRes Tunnel'
+    ? 200
+    : 100;
 
   const scene: Scene = {
     gravity: -9.81,

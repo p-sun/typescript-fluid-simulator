@@ -107,14 +107,14 @@ export function createFluidSim(options: {
   const fluidSim = new FluidSim(initialScene, canvasSize, fluidCanvas.context);
   fluidCanvas.setListener(fluidSim);
 
+  options.autostart ? fluidSim.update() : fluidSim.step();
+
   appendInputs(
     document.getElementById(options.buttonsDomId)!,
     canvasSize,
     initialScene,
     fluidSim
   );
-
-  options.autostart ? fluidSim.update() : fluidSim.step();
 }
 
 function appendInputs(

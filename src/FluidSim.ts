@@ -1,8 +1,8 @@
-import { Canvas, CanvasListener } from './Canvas';
 import { draw } from './FluidDraw';
 import { inputsForScene } from './FluidHTMLButtons';
 import { getSceneConfig, Scene, TunnelType, setObstacle } from './FluidScene';
-import Vec2 from './GenericModels/Vec2';
+import { Canvas, CanvasListener } from './Utils/Canvas';
+import Vec2 from './Utils/Vec2';
 
 export class FluidSim implements CanvasListener {
   private scene: Scene;

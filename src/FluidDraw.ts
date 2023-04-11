@@ -1,5 +1,5 @@
 import { Scene } from './FluidScene';
-import Vec2 from './GenericModels/Vec2';
+import Vec2 from './Utils/Vec2';
 
 function sizeTransformations(cSize: Vec2) {
   const windowScale = window.devicePixelRatio;

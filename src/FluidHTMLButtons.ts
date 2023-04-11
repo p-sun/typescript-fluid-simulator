@@ -1,5 +1,5 @@
 import { Scene, TunnelType } from './FluidScene';
-import { createSliderWithText } from './HTMLSlider';
+import { createSliderWithText } from './Utils/HTMLSlider';
 
 export function inputsForScene(
   scene: Scene,

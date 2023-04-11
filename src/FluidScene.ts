@@ -1,5 +1,5 @@
 import { FluidPhysics } from './FluidPhysics';
-import Vec2 from './GenericModels/Vec2';
+import Vec2 from './Utils/Vec2';
 
 export type Scene = {
   gravity: number;

@@ -1,4 +1,4 @@
-import Vec2 from './GenericModels/Vec2';
+import Vec2 from './Vec2';
 
 export interface CanvasListener {
   startDrag: (x: number, y: number) => void;
@@ -8,14 +8,14 @@ export interface CanvasListener {
 }
 
 export class Canvas {
-  public context: CanvasRenderingContext2D;
+  #context: CanvasRenderingContext2D;
   #canvas: HTMLCanvasElement;
   #size: Vec2 = Vec2.zero;
   #listener: CanvasListener | undefined;
 
   constructor(canvas: HTMLCanvasElement, newSize: Vec2) {
     this.#canvas = canvas;
-    this.context = canvas.getContext('2d', {
+    this.#context = canvas.getContext('2d', {
       willReadFrequently: true,
     }) as CanvasRenderingContext2D;
     this.setCanvasSize(newSize);
@@ -34,6 +34,10 @@ export class Canvas {
     return this.#size.y;
   }
 
+  public get context(): CanvasRenderingContext2D {
+    return this.#context;
+  }
+
   setCanvasSize(newSize: Vec2) {
     this.#size = newSize;
 
@@ -43,7 +47,7 @@ export class Canvas {
     const scale = window.devicePixelRatio;
     this.#canvas.width = Math.floor(newSize.x * scale);
     this.#canvas.height = Math.floor(newSize.y * scale);
-    this.context.scale(scale, scale);
+    this.#context.scale(scale, scale);
     this.#canvas.focus();
   }
 

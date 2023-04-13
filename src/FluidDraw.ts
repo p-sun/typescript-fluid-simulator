@@ -47,6 +47,7 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
   const pxPerCell = Math.ceil(cL(h) * windowScale);
   const id = c.getImageData(0, 0, pxWidth, pxHeight);
 
+  const solidColor = [255, 255, 0];
   let color = [255, 255, 255, 255];
 
   for (let i = 0; i < f.numX; i++) {
@@ -63,14 +64,23 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
         }
       } else if (scene.showSmoke) {
         const s = f.m[i * n + j];
-        color[0] = 255 * s;
-        color[1] = 255 * s;
-        color[2] = 255 * s;
-        if (scene.tunnel === 'Paint Tunnel') color = getSciColor(s, 0.0, 1.0);
-      } else if (f.s[i * n + j] == 0.0) {
-        color[0] = 0;
-        color[1] = 0;
-        color[2] = 0;
+        if (scene.tunnel === 'Paint Tunnel') {
+          color = getSciColor(s, 0.0, 1.0);
+        } else {
+          color[0] = 255 * s;
+          color[1] = 255 * s;
+          color[2] = 255 * s;
+        }
+      } else {
+        color = [255, 255, 255, 255];
+      }
+
+      if (scene.showSolid) {
+        const s = f.s[i * n + j]; // 1 = fluid, 0 = solid
+        if (s < 1) {
+          const opacity = 1.0 - s;
+          color = blendColors(solidColor, color, opacity);
+        }
       }
 
       const x = Math.floor(gcX(i, h) * windowScale);
@@ -203,6 +213,14 @@ function setColor(
       ${Math.floor(255 * r)},
       ${Math.floor(255 * g)},
       ${Math.floor(255 * b)})`;
+}
+
+function blendColors(top: number[], bottom: number[], opacity: number) {
+  return [
+    opacity * top[0] + (1 - opacity) * bottom[0],
+    opacity * top[1] + (1 - opacity) * bottom[1],
+    opacity * top[2] + (1 - opacity) * bottom[2],
+  ];
 }
 
 function getSciColor(val: number, minVal: number, maxVal: number) {

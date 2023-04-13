@@ -16,6 +16,7 @@ export type Scene = {
   showVelocities: boolean;
   showPressure: boolean;
   showSmoke: boolean;
+  showSolid: boolean;
   tunnel: TunnelType;
   fluid: FluidPhysics;
 };
@@ -64,6 +65,7 @@ export function getSceneConfig(
     showVelocities: false,
     showPressure: false,
     showSmoke: true,
+    showSolid: false,
     fluid: makeFluidPhysics(resolution, canvasSize),
   };
 

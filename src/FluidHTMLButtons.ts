@@ -44,6 +44,10 @@ export function inputsForScene(
       scene.showObstacle = !scene.showObstacle;
     }),
     'Obstacle',
+    createCheckbox(scene.showSolid, () => {
+      scene.showSolid = !scene.showSolid;
+    }),
+    'Solid',
     createCheckbox(scene.overRelaxation > 1.0, () => {
       scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;
     }),

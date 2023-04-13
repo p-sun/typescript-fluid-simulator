@@ -65,6 +65,19 @@ export function inputsForScene(
         onChangeScene(scene.tunnel, resOverride > 0 ? resOverride : undefined);
       }
     ),
+    createSliderWithText(
+      {
+        initialValue: scene.obstacleRadius,
+        min: 0.01,
+        max: 0.2,
+        stepSize: 0.01,
+        label: 'Obstacle Radius',
+        callbackOnlyOnPointerUp: false,
+      },
+      (radius) => {
+        scene.obstacleRadius = radius;
+      }
+    ),
     `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
   ];
 }

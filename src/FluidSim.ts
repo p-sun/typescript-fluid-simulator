@@ -57,6 +57,10 @@ export class FluidSim implements CanvasListener {
     this.mouseDown = false;
   }
 
+  updateObstacle() {
+    setObstacle(this.scene, this.scene.obstacleX, this.scene.obstacleY, false);
+  }
+
   pausePressed() {
     this.scene.paused = !this.scene.paused;
     if (!this.scene.paused) {
@@ -123,12 +127,20 @@ function appendInputs(
   initialScene: Scene,
   fluidSim: FluidSim
 ) {
-  const onPauseToggled = () => {
-    fluidSim.pausePressed();
-  };
   const setDiv = (scene: Scene) => {
     inputDiv.innerHTML = '';
-    inputDiv.append(...inputsForScene(scene, onPauseToggled, onChangeScene));
+    inputDiv.append(
+      ...inputsForScene({
+        scene,
+        onPauseToggled: () => {
+          fluidSim.pausePressed();
+        },
+        onObstacleChanged: () => {
+          fluidSim.updateObstacle();
+        },
+        onChangeScene,
+      })
+    );
   };
   const onChangeScene = (tunnel: TunnelType, resOverride?: number) => {
     cachedRes = resOverride ?? cachedRes;

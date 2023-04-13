@@ -1,11 +1,13 @@
 import { Scene, TunnelType } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
-export function inputsForScene(
-  scene: Scene,
-  onPauseToggled: () => void,
-  onChangeScene: (tunnel: TunnelType, resOverride?: number) => void
-): (string | HTMLElement)[] {
+export function inputsForScene(options: {
+  scene: Scene;
+  onPauseToggled: () => void;
+  onObstacleChanged: () => void;
+  onChangeScene: (tunnel: TunnelType, resOverride?: number) => void;
+}): (string | HTMLElement)[] {
+  const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
   return [
     createButton('Wind Tunnel', () => {
       onChangeScene('Wind Tunnel');
@@ -76,6 +78,7 @@ export function inputsForScene(
       },
       (radius) => {
         scene.obstacleRadius = radius;
+        onObstacleChanged();
       }
     ),
     `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,

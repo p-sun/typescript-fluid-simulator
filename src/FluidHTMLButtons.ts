@@ -9,6 +9,7 @@ export function inputsForScene(options: {
 }): (string | HTMLElement)[] {
   const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
   return [
+    createBreak(),
     createButton('Wind Tunnel', () => {
       onChangeScene('Wind Tunnel');
     }),
@@ -21,39 +22,48 @@ export function inputsForScene(options: {
     createButton('HiRes Tunnel', () => {
       onChangeScene('HiRes Tunnel');
     }),
+    createButton('Latte Tunnel', () => {
+      onChangeScene('Latte Tunnel');
+    }),
     createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
       setText(!scene.paused ? 'Start' : 'Pause');
       onPauseToggled();
     }),
-    document.createElement('br'),
-    createCheckbox(scene.showStreamlines, () => {
+    createBreak(),
+    createCheckbox('Streamlines', scene.showStreamlines, () => {
       scene.showStreamlines = !scene.showStreamlines;
     }),
-    'Streamlines',
-    createCheckbox(scene.showVelocities, () => {
+    createCheckbox('Velocity', scene.showVelocities, () => {
       scene.showVelocities = !scene.showVelocities;
     }),
-    'Velocity',
-    createCheckbox(scene.showPressure, () => {
+
+    createCheckbox('Pressure', scene.showPressure, () => {
       scene.showPressure = !scene.showPressure;
     }),
-    'Pressure',
-    createCheckbox(scene.showSmoke, () => {
+
+    createCheckbox('Smoke', scene.showSmoke, () => {
       scene.showSmoke = !scene.showSmoke;
     }),
-    'Smoke',
-    createCheckbox(scene.showObstacle, () => {
+    createCheckbox('Obstacle', scene.showObstacle, () => {
       scene.showObstacle = !scene.showObstacle;
     }),
-    'Obstacle',
-    createCheckbox(scene.showSolid, () => {
+    createCheckbox('Solid', scene.showSolid, () => {
       scene.showSolid = !scene.showSolid;
     }),
-    'Solid',
-    createCheckbox(scene.overRelaxation > 1.0, () => {
-      scene.overRelaxation = scene.overRelaxation == 1.0 ? 1.9 : 1.0;
-    }),
-    'Over Relaxation',
+    createBreak(),
+    createSliderWithText(
+      {
+        initialValue: scene.overRelaxation,
+        min: 0.05,
+        max: 1.95,
+        stepSize: 0.05,
+        label: 'Over Relaxation',
+        callbackOnlyOnPointerUp: false,
+      },
+      (val) => {
+        scene.overRelaxation = val;
+      }
+    ),
     createSliderWithText(
       {
         initialValue: scene.fluid.numY,
@@ -85,6 +95,13 @@ export function inputsForScene(options: {
   ];
 }
 
+function createBreak() {
+  const br = document.createElement('div');
+  br.style.flexBasis = '100%';
+  br.style.height = '4pt';
+  return br;
+}
+
 function createButton(
   text: string,
   fn: (setText: (text: string) => void) => void
@@ -99,9 +116,10 @@ function createButton(
 }
 
 function createCheckbox(
+  text: string,
   checked: boolean,
   fn: (setChecked: (checked: boolean) => void) => void
-): HTMLInputElement {
+) {
   let checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.checked = checked;
@@ -109,5 +127,16 @@ function createCheckbox(
   const setChecked = (checked: boolean) => (checkbox.checked = checked);
   checkbox.onclick = () => fn(setChecked);
 
-  return checkbox;
+  const label = document.createElement('div');
+  label.innerText = text;
+
+  const container = document.createElement('div');
+  container.appendChild(checkbox);
+  container.style.display = 'flex';
+  container.style.alignItems = 'center';
+  container.style.columnGap = '2px';
+
+  container.appendChild(label);
+
+  return container;
 }

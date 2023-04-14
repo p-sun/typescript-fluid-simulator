@@ -29,7 +29,7 @@ function createSlider(options: SliderOptions) {
 
 function createText(options: SliderOptions) {
   const text = document.createElement('input');
-  text.style.width = '36px';
+  text.style.width = '36pt';
   text.value = options.initialValue.toString();
   return text;
 }
@@ -43,14 +43,13 @@ function createContainer(
   const container = document.createElement('div');
   container.style.display = 'flex';
   container.style.backgroundColor = '#cfcfcf';
-  container.style.padding = '4px';
-  container.style.borderRadius = '4px';
-  container.style.marginBottom = '4px';
+  container.style.padding = '4pt';
+  container.style.borderRadius = '4pt';
 
   if (options.label) {
     const label = document.createElement('div');
     label.innerText = options.label;
-    label.style.marginRight = '8px';
+    label.style.marginRight = '8pt';
     container.appendChild(label);
   }
 
@@ -73,6 +72,7 @@ function createContainer(
     slider.value = val.toString();
     didChange(val);
   };
+
   text.onchange = () => {
     const val = getValue(Number.parseFloat(text.value), options);
     slider.value = val.toString();

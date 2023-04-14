@@ -264,11 +264,11 @@ export class FluidPhysics {
     this.m.set(this.newM);
   }
 
-  simulate(scene: Scene, dt: number, gravity: number, numIters: number) {
-    this.integrate(dt, gravity);
+  simulate(s: Scene, dt: number) {
+    this.integrate(dt, s.gravity);
 
     this.p.fill(0.0);
-    this.solveIncompressibility(scene, numIters, dt);
+    this.solveIncompressibility(s, s.numIters, dt);
 
     this.extrapolate();
     this.advectVel(dt);

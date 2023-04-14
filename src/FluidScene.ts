@@ -7,16 +7,18 @@ export type Scene = {
   numIters: number;
   frameNr: number;
   overRelaxation: number;
+
   obstacleX: number;
   obstacleY: number;
   obstacleRadius: number;
-  paused: boolean;
+
   showObstacle: boolean;
   showStreamlines: boolean;
   showVelocities: boolean;
   showPressure: boolean;
   showSmoke: boolean;
   showSolid: boolean;
+  paused: boolean;
   tunnel: TunnelType;
   fluid: FluidPhysics;
 };

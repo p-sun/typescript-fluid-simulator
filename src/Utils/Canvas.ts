@@ -69,6 +69,8 @@ export class Canvas {
       return { x: clientX - rect.x, y: clientY - rect.y };
     };
 
+    document.addEventListener('contextmenu', (event) => event.preventDefault());
+
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
         case 'p':

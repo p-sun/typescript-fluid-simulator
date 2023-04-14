@@ -47,8 +47,8 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
   const pxPerCell = Math.ceil(cL(h) * windowScale);
   const id = c.getImageData(0, 0, pxWidth, pxHeight);
 
-  const solidColor = [255, 255, 0];
   let color = [255, 255, 255, 255];
+  const yellow = [255, 255, 0];
 
   for (let i = 0; i < f.numX; i++) {
     for (let j = 0; j < f.numY; j++) {
@@ -79,7 +79,7 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
         const s = f.s[i * n + j]; // 1 = fluid, 0 = solid
         if (s < 1) {
           const opacity = 1.0 - s;
-          color = blendColors(solidColor, color, opacity);
+          color = blendColors(yellow, color, opacity);
         }
       }
 

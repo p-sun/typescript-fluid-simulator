@@ -22,9 +22,6 @@ export function inputsForScene(options: {
     createButton('HiRes Tunnel', () => {
       onChangeScene('HiRes Tunnel');
     }),
-    createButton('Latte Tunnel', () => {
-      onChangeScene('Latte Tunnel');
-    }),
     createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
       setText(!scene.paused ? 'Start' : 'Pause');
       onPauseToggled();
@@ -36,11 +33,9 @@ export function inputsForScene(options: {
     createCheckbox('Velocity', scene.showVelocities, () => {
       scene.showVelocities = !scene.showVelocities;
     }),
-
     createCheckbox('Pressure', scene.showPressure, () => {
       scene.showPressure = !scene.showPressure;
     }),
-
     createCheckbox('Smoke', scene.showSmoke, () => {
       scene.showSmoke = !scene.showSmoke;
     }),
@@ -80,9 +75,9 @@ export function inputsForScene(options: {
     createSliderWithText(
       {
         initialValue: scene.obstacleRadius,
-        min: 0.01,
+        min: 0.005,
         max: 0.2,
-        stepSize: 0.01,
+        stepSize: 0.005,
         label: 'Obstacle Radius',
         callbackOnlyOnPointerUp: false,
       },

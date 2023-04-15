@@ -80,6 +80,7 @@ export function inputsForScene(options: {
       scene.showSolid = !scene.showSolid;
     }),
     createBreak(),
+    ...latteSliders,
     createSliderWithText(
       {
         initialValue: scene.obstacleRadius,
@@ -94,7 +95,6 @@ export function inputsForScene(options: {
         onObstacleChanged();
       }
     ),
-    ...latteSliders,
     createSliderWithText(
       {
         initialValue: scene.overRelaxation,

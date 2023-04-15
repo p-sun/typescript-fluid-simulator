@@ -45,7 +45,12 @@ export class FluidSim implements CanvasListener {
 
   simulate() {
     this.scene.fluid.simulate(this.scene, this.scene.dt);
-    this.scene.frameNr = this.scene.frameNr + 1;
+    if (
+      this.scene.tunnel !== 'Latte Tunnel' ||
+      (this.scene.tunnel == 'Latte Tunnel' && this.mouseDown)
+    ) {
+      this.scene.frameNr = this.scene.frameNr + 1;
+    }
   }
 
   pausePressed() {
@@ -57,10 +62,7 @@ export class FluidSim implements CanvasListener {
 
   startDrag(cx: number, cy: number) {
     this.mouseDown = true;
-    if (this.scene.tunnel === 'Latte Tunnel') {
-      this.scene.frameNr = 0;
-    }
-    setObstacle(this.scene, this.sX(cx), this.sY(cy), true);
+    setObstacle(this.scene, this.sX(cx), this.sY(cy), true, true);
   }
 
   drag(cx: number, cy: number, isLeft: boolean) {

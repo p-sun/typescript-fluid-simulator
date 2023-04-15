@@ -13,15 +13,16 @@ export type Scene = {
   obstacleY: number;
   obstacleRadius: number;
 
+  latteCupRadius: number;
+  milkStartSpeed: number;
+  milkTimeToZeroSpeed: number;
+
   showObstacle: boolean;
   showStreamlines: boolean;
   showVelocities: boolean;
   showPressure: boolean;
   showSmoke: boolean;
   showSolid: boolean;
-
-  latteMilk: boolean;
-  latteCupRadius: number;
 
   paused: boolean;
   tunnel: TunnelType;
@@ -78,6 +79,8 @@ export function getSceneConfig(
     showSmoke: true,
     showSolid: false,
     latteCupRadius: 0.4,
+    milkStartSpeed: 0.8,
+    milkTimeToZeroSpeed: 6,
     fluid: makeFluidPhysics(resolution, canvasSize, drag),
   };
 
@@ -155,7 +158,7 @@ export function getSceneConfig(
     scene.showVelocities = false;
     scene.obstacleRadius = 0.038;
     scene.showObstacle = false;
-    scene.smokeDissipation = 0.9998;
+    scene.smokeDissipation = 1;
   }
 
   return scene;
@@ -210,8 +213,14 @@ export function setObstacle(
   if (scene.tunnel === 'Latte Tunnel') {
     if (isLeft) {
       // Over 5 secs since left mouse press, the radius shrinks from r to 0.53r.
-      r = r * remap(scene.frameNr, 0, 5 / scene.dt, 1, 0.53);
-      latteV = remap(scene.frameNr, 0, 6 / scene.dt, 0.8, 0.14);
+      r = r * remap(scene.frameNr, 0, 6 / scene.dt, 1, 0.4);
+      latteV = remap(
+        scene.frameNr,
+        0,
+        scene.milkTimeToZeroSpeed / scene.dt,
+        scene.milkStartSpeed,
+        0
+      );
     } else {
       r = 0.01;
       latteV = 0.0;

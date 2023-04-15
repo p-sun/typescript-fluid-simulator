@@ -8,9 +8,23 @@ export function inputsForScene(options: {
   onChangeScene: (tunnel: TunnelType, resOverride?: number) => void;
 }): (string | HTMLElement)[] {
   const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
-  const dissipationCheckbox =
+  const latteSliders =
     scene.tunnel === 'Latte Tunnel'
       ? [
+          createSliderWithText(
+            {
+              initialValue: scene.milkStartSpeed,
+              min: 0,
+              max: 1.2,
+              stepSize: 0.001,
+              label: 'Milk Speed',
+              callbackOnlyOnPointerUp: false,
+            },
+            (val) => {
+              scene.milkStartSpeed = val;
+            }
+          ),
+
           createSliderWithText(
             {
               initialValue: 1 - scene.smokeDissipation,
@@ -22,6 +36,19 @@ export function inputsForScene(options: {
             },
             (val) => {
               scene.smokeDissipation = 1 - val;
+            }
+          ),
+          createSliderWithText(
+            {
+              initialValue: scene.milkTimeToZeroSpeed,
+              min: 3,
+              max: 18,
+              stepSize: 0.1,
+              label: 'Milk Time to 0 Speed',
+              callbackOnlyOnPointerUp: true,
+            },
+            (val) => {
+              scene.milkTimeToZeroSpeed = val;
             }
           ),
         ]
@@ -69,6 +96,21 @@ export function inputsForScene(options: {
     createBreak(),
     createSliderWithText(
       {
+        initialValue: scene.obstacleRadius,
+        min: 0.005,
+        max: 0.2,
+        stepSize: 0.005,
+        label: 'Obstacle Radius',
+        callbackOnlyOnPointerUp: false,
+      },
+      (radius) => {
+        scene.obstacleRadius = radius;
+        onObstacleChanged();
+      }
+    ),
+    ...latteSliders,
+    createSliderWithText(
+      {
         initialValue: scene.overRelaxation,
         min: 0.05,
         max: 1.95,
@@ -93,21 +135,6 @@ export function inputsForScene(options: {
         onChangeScene(scene.tunnel, resOverride > 0 ? resOverride : undefined);
       }
     ),
-    createSliderWithText(
-      {
-        initialValue: scene.obstacleRadius,
-        min: 0.005,
-        max: 0.2,
-        stepSize: 0.005,
-        label: 'Obstacle Radius',
-        callbackOnlyOnPointerUp: false,
-      },
-      (radius) => {
-        scene.obstacleRadius = radius;
-        onObstacleChanged();
-      }
-    ),
-    ...dissipationCheckbox,
     `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
   ];
 }

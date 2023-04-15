@@ -24,20 +24,6 @@ export function inputsForScene(options: {
               scene.milkStartSpeed = val;
             }
           ),
-
-          createSliderWithText(
-            {
-              initialValue: 1 - scene.smokeDissipation,
-              min: 0,
-              max: 0.01,
-              stepSize: 0.001,
-              label: 'Dissipation',
-              callbackOnlyOnPointerUp: false,
-            },
-            (val) => {
-              scene.smokeDissipation = 1 - val;
-            }
-          ),
           createSliderWithText(
             {
               initialValue: scene.milkTimeToZeroSpeed,
@@ -120,6 +106,19 @@ export function inputsForScene(options: {
       },
       (val) => {
         scene.overRelaxation = val;
+      }
+    ),
+    createSliderWithText(
+      {
+        initialValue: 1 - scene.smokeDissipation,
+        min: 0,
+        max: 0.01,
+        stepSize: 0.001,
+        label: 'Dissipation',
+        callbackOnlyOnPointerUp: false,
+      },
+      (val) => {
+        scene.smokeDissipation = 1 - val;
       }
     ),
     createSliderWithText(

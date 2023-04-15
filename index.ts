@@ -5,7 +5,7 @@ const fluidSim = createFluidSim({
   initialTunnel: 'Wind Tunnel',
   canvasDomId: 'myCanvas',
   buttonsDomId: 'inputDiv',
-  canvasSize: new Vec2(window.innerWidth - 80, window.innerHeight - 180),
+  canvasSize: new Vec2(window.innerWidth - 40, window.innerHeight - 180),
   resolutionOverride: undefined,
   autostart: true,
 });

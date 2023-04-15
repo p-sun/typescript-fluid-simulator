@@ -13,6 +13,7 @@ export type Scene = {
   obstacleY: number;
   obstacleRadius: number;
 
+  lattePen: boolean;
   latteCupRadius: number;
   milkStartSpeed: number;
   milkTimeToZeroSpeed: number;
@@ -78,6 +79,7 @@ export function getSceneConfig(
     showPressure: false,
     showSmoke: true,
     showSolid: false,
+    lattePen: false,
     latteCupRadius: 0.4,
     milkStartSpeed: 0.8,
     milkTimeToZeroSpeed: 6,
@@ -208,7 +210,7 @@ export function setObstacle(
 
   const latteCupOuter = scene.latteCupRadius;
   const latteCupInner = latteCupOuter - 0.01;
-  const latteMilk = isLeft;
+  const latteMilk = isLeft && !scene.lattePen;
   let latteV = 0.0; // Latte velocity
   if (scene.tunnel === 'Latte Tunnel') {
     if (isLeft) {

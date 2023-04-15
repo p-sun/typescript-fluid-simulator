@@ -8,6 +8,14 @@ export function inputsForScene(options: {
   onChangeScene: (tunnel: TunnelType, resOverride?: number) => void;
 }): (string | HTMLElement)[] {
   const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
+  const latteCheckbox =
+    'Latte Tunnel' === scene.tunnel
+      ? [
+          createCheckbox('Latte Pen', scene.lattePen, () => {
+            scene.lattePen = !scene.lattePen;
+          }),
+        ]
+      : [];
   const latteSliders =
     scene.tunnel === 'Latte Tunnel'
       ? [
@@ -41,6 +49,10 @@ export function inputsForScene(options: {
       : [];
   return [
     createBreak(),
+    createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
+      setText(!scene.paused ? 'Start' : 'Pause');
+      onPauseToggled();
+    }),
     createButton('Wind Tunnel', () => {
       onChangeScene('Wind Tunnel');
     }),
@@ -55,10 +67,6 @@ export function inputsForScene(options: {
     }),
     createButton('Latte Tunnel', () => {
       onChangeScene('Latte Tunnel');
-    }),
-    createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
-      setText(!scene.paused ? 'Start' : 'Pause');
-      onPauseToggled();
     }),
     createBreak(),
     createCheckbox('Streamlines', scene.showStreamlines, () => {
@@ -79,6 +87,7 @@ export function inputsForScene(options: {
     createCheckbox('Solid', scene.showSolid, () => {
       scene.showSolid = !scene.showSolid;
     }),
+    ...latteCheckbox,
     createBreak(),
     ...latteSliders,
     createSliderWithText(

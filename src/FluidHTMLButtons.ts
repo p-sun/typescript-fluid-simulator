@@ -144,7 +144,7 @@ export function inputsForScene(options: {
       }
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
-    `\nLatte Art: Left click + drag for milk, Right click + drag for pen tool (two fingered drag on mobile)`,
+    `\nLeft drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Tunnel" to restart.`,
   ];
 }
 

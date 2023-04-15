@@ -86,6 +86,19 @@ export function inputsForScene(options: {
         onObstacleChanged();
       }
     ),
+    createSliderWithText(
+      {
+        initialValue: 1 - scene.smokeDissipation,
+        min: 0,
+        max: 0.01,
+        stepSize: 0.001,
+        label: 'Dissipation',
+        callbackOnlyOnPointerUp: false,
+      },
+      (val) => {
+        scene.smokeDissipation = 1 - val;
+      }
+    ),
     `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
   ];
 }

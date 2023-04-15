@@ -7,6 +7,7 @@ export type Scene = {
   numIters: number;
   frameNr: number;
   overRelaxation: number;
+  smokeDissipation: number;
 
   obstacleX: number;
   obstacleY: number;
@@ -60,6 +61,7 @@ export function getSceneConfig(
     obstacleX: 0.0,
     obstacleY: 0.0,
     obstacleRadius: 0.15,
+    smokeDissipation: 1.0,
     paused: false,
     tunnel: 'Tank Tunnel',
     showObstacle: true,

@@ -242,7 +242,7 @@ export class FluidPhysics {
 
   // Similar to advectVel, but for smoke density.
   // New density is a weighted average of neighbouring smoke densities.
-  advectSmoke(dt: number) {
+  advectSmoke(dt: number, smokeDissipation: number) {
     this.newM.set(this.m);
 
     const n = this.numY;
@@ -256,8 +256,8 @@ export class FluidPhysics {
           const v = (this.v[i * n + j] + this.v[i * n + j + 1]) * 0.5;
           const x = i * h + h2 - dt * u;
           const y = j * h + h2 - dt * v;
-
-          this.newM[i * n + j] = this.sampleField(x, y, 'S_FIELD');
+          this.newM[i * n + j] =
+            this.sampleField(x, y, 'S_FIELD') * smokeDissipation;
         }
       }
     }
@@ -272,6 +272,6 @@ export class FluidPhysics {
 
     this.extrapolate();
     this.advectVel(dt);
-    this.advectSmoke(dt);
+    this.advectSmoke(dt, s.smokeDissipation);
   }
 }

@@ -108,6 +108,7 @@ export class Canvas {
     this.#canvas.addEventListener(
       'touchmove',
       (e) => {
+        e.preventDefault();
         e.stopImmediatePropagation();
         const { x, y } = getPos(e.touches[0].clientX, e.touches[0].clientY);
         this.#listener?.drag(x, y, e.touches.length === 1);

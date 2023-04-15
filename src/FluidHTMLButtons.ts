@@ -135,7 +135,8 @@ export function inputsForScene(options: {
         onChangeScene(scene.tunnel, resOverride > 0 ? resOverride : undefined);
       }
     ),
-    `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
+    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
+    `\nLatte Art: Left click + drag for milk, Right click + drag for pen tool (two fingered drag on mobile)`,
   ];
 }
 

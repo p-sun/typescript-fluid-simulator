@@ -4,7 +4,8 @@
 
 I made a latte art simulator where the process of making latte art using it feels like real life. To get good at drawing latte art here, you need to pay attention to the same concepts as you would in real life -- experimenting with speed of your pour, the shape you're drawing, the timing, keeping it symetrical, and making quick micro adjustments as the milk flow slows down while you fill up the cup.
 
-**Play with Latte Art! https://typescript-lzex4b.stackblitz.io**
+## Play with Latte Art! https://typescript-lzex4b.stackblitz.io
+
 Left drag to pour "milk", right drag to use the latte pen tool. Click "Latte Tunnel" to restart.
 
 Latte Art with Code: https://stackblitz.com/edit/typescript-lzex4b?file=index.ts

@@ -20,6 +20,21 @@ export class FluidSim implements CanvasListener {
     this.scene = scene;
   }
 
+  keyDown(key: 'm' | 'p') {
+    if (key === 'm') {
+      this.step();
+    } else if (key === 'p') {
+      this.pausePressed();
+    }
+  }
+
+  step() {
+    this.scene.paused = false;
+    this.simulate();
+    draw(this.scene, this.cSize, this.context);
+    this.scene.paused = true;
+  }
+
   update() {
     this.simulate();
     draw(this.scene, this.cSize, this.context);
@@ -29,36 +44,8 @@ export class FluidSim implements CanvasListener {
   }
 
   simulate() {
-    const { dt, gravity, numIters } = this.scene;
-    this.scene.fluid.simulate(this.scene, dt, gravity, numIters);
-    this.scene.frameNr++;
-  }
-
-  keyDown(key: 'm' | 'p') {
-    if (key === 'm') {
-      this.step();
-    } else if (key === 'p') {
-      this.pausePressed();
-    }
-  }
-
-  startDrag(cx: number, cy: number) {
-    this.mouseDown = true;
-    setObstacle(this.scene, this.sX(cx), this.sY(cy), true);
-  }
-
-  drag(cx: number, cy: number) {
-    if (this.mouseDown) {
-      setObstacle(this.scene, this.sX(cx), this.sY(cy), false);
-    }
-  }
-
-  endDrag() {
-    this.mouseDown = false;
-  }
-
-  updateObstacle() {
-    setObstacle(this.scene, this.scene.obstacleX, this.scene.obstacleY, false);
+    this.scene.fluid.simulate(this.scene, this.scene.dt);
+    this.scene.frameNr = this.scene.frameNr + 1;
   }
 
   pausePressed() {
@@ -68,11 +55,29 @@ export class FluidSim implements CanvasListener {
     }
   }
 
-  step() {
-    this.scene.paused = false;
-    this.simulate();
-    draw(this.scene, this.cSize, this.context);
-    this.scene.paused = true;
+  startDrag(cx: number, cy: number) {
+    this.mouseDown = true;
+    if (this.scene.tunnel === 'Latte Tunnel') {
+      this.scene.frameNr = 0;
+    }
+    setObstacle(this.scene, this.sX(cx), this.sY(cy), true);
+  }
+
+  drag(cx: number, cy: number, isLeft: boolean) {
+    if (this.mouseDown) {
+      setObstacle(this.scene, this.sX(cx), this.sY(cy), false, isLeft);
+    }
+  }
+
+  endDrag() {
+    this.mouseDown = false;
+    if (this.scene.tunnel === 'Latte Tunnel') {
+      setObstacle(this.scene, 0, 0, true);
+    }
+  }
+
+  updateObstacle() {
+    setObstacle(this.scene, this.scene.obstacleX, this.scene.obstacleY, false);
   }
 
   private sX(canvasX: number) {

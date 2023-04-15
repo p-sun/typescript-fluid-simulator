@@ -4,6 +4,7 @@ type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
 
 export class FluidPhysics {
   density: number;
+  drag: number;
 
   // Grid Sizes
   numX: number;
@@ -21,8 +22,15 @@ export class FluidPhysics {
   m: Float32Array; // Smoke density. 0 = black, 1 = white
   newM: Float32Array; // Buffer for smoke density
 
-  constructor(density: number, numX: number, numY: number, h: number) {
+  constructor(
+    density: number,
+    drag: number,
+    numX: number,
+    numY: number,
+    h: number
+  ) {
     this.density = density;
+    this.drag = drag;
     this.numX = numX;
     this.numY = numY;
     this.numCells = this.numX * this.numY;
@@ -64,7 +72,7 @@ export class FluidPhysics {
     }
   }
 
-  solveIncompressibility(scene: Scene, numIters: number, dt: number) {
+  solveIncompressibility(overRelaxation: number, numIters: number, dt: number) {
     const n = this.numY;
     const cp = (this.density * this.h) / dt;
 
@@ -92,7 +100,7 @@ export class FluidPhysics {
             this.v[i * n + j];
 
           // dDiv - Average divergence of non-obstacle NSEW cells
-          const dDiv = (-div / s) * scene.overRelaxation;
+          const dDiv = (-div / s) * overRelaxation;
 
           // u, v - Velocity
           // Note that if s_ij is an obstacle, its velocity doesn't change.
@@ -215,7 +223,7 @@ export class FluidPhysics {
 
           //  weighted average of velocity at prev position
           const u0 = this.sampleField(x0, y0, 'U_FIELD');
-          this.newU[i * n + j] = u0;
+          this.newU[i * n + j] = u0 * this.drag;
         }
         // v component (vertical) -----------
         // Same as above, but for v instead of u
@@ -231,7 +239,7 @@ export class FluidPhysics {
           const x0 = x - dt * u;
           const y0 = y - dt * v;
           const v0 = this.sampleField(x0, y0, 'V_FIELD');
-          this.newV[i * n + j] = v0;
+          this.newV[i * n + j] = v0 * this.drag;
         }
       }
     }
@@ -268,7 +276,7 @@ export class FluidPhysics {
     this.integrate(dt, s.gravity);
 
     this.p.fill(0.0);
-    this.solveIncompressibility(s, s.numIters, dt);
+    this.solveIncompressibility(s.overRelaxation, s.numIters, dt);
 
     this.extrapolate();
     this.advectVel(dt);

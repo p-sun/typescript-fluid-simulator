@@ -8,6 +8,24 @@ export function inputsForScene(options: {
   onChangeScene: (tunnel: TunnelType, resOverride?: number) => void;
 }): (string | HTMLElement)[] {
   const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
+  const dissipationCheckbox =
+    scene.tunnel === 'Latte Tunnel'
+      ? [
+          createSliderWithText(
+            {
+              initialValue: 1 - scene.smokeDissipation,
+              min: 0,
+              max: 0.01,
+              stepSize: 0.001,
+              label: 'Dissipation',
+              callbackOnlyOnPointerUp: false,
+            },
+            (val) => {
+              scene.smokeDissipation = 1 - val;
+            }
+          ),
+        ]
+      : [];
   return [
     createBreak(),
     createButton('Wind Tunnel', () => {
@@ -21,6 +39,9 @@ export function inputsForScene(options: {
     }),
     createButton('HiRes Tunnel', () => {
       onChangeScene('HiRes Tunnel');
+    }),
+    createButton('Latte Tunnel', () => {
+      onChangeScene('Latte Tunnel');
     }),
     createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
       setText(!scene.paused ? 'Start' : 'Pause');
@@ -86,19 +107,7 @@ export function inputsForScene(options: {
         onObstacleChanged();
       }
     ),
-    createSliderWithText(
-      {
-        initialValue: 1 - scene.smokeDissipation,
-        min: 0,
-        max: 0.01,
-        stepSize: 0.001,
-        label: 'Dissipation',
-        callbackOnlyOnPointerUp: false,
-      },
-      (val) => {
-        scene.smokeDissipation = 1 - val;
-      }
-    ),
+    ...dissipationCheckbox,
     `Keyboard Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
   ];
 }

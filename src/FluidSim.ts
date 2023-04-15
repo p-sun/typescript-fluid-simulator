@@ -29,8 +29,7 @@ export class FluidSim implements CanvasListener {
   }
 
   simulate() {
-    const { dt, gravity, numIters } = this.scene;
-    this.scene.fluid.simulate(this.scene, dt, gravity, numIters);
+    this.scene.fluid.simulate(this.scene, this.scene.dt);
     this.scene.frameNr++;
   }
 

@@ -20,6 +20,8 @@ If you're learning fluid simulation for the first time, I'd recommend watching h
 
 `no_latte_art` branch is also here: https://stackblitz.com/edit/typescript-niznck?file=index.ts
 
+https://user-images.githubusercontent.com/9044578/232339842-c2dac2ad-2100-486f-ace9-cf461f80a239.mov
+
 [![Eulerian Fluid Simulator](https://img.youtube.com/vi/iKAVRgIrUOU/0.jpg)](https://www.youtube.com/watch?v=iKAVRgIrUOU)
 
 ## My Notes

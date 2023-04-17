@@ -66,9 +66,9 @@ export class FluidSim implements CanvasListener {
     }
   }
 
-  startDrag(cx: number, cy: number) {
+  startDrag(cx: number, cy: number, isLeft: boolean) {
     this.mouseDown = true;
-    setObstacle(this.scene, this.sX(cx), this.sY(cy), true, true);
+    setObstacle(this.scene, this.sX(cx), this.sY(cy), true, isLeft);
   }
 
   drag(cx: number, cy: number, isLeft: boolean) {

@@ -1,41 +1,87 @@
 import { FluidPhysics } from './FluidPhysics';
 import Vec2 from './Utils/Vec2';
 
-export type Scene = {
-  gravity: number;
-  dt: number;
-  numIters: number;
-  frameNr: number;
-  overRelaxation: number;
-  smokeDissipation: number;
-
-  obstacleX: number;
-  obstacleY: number;
-  obstacleRadius: number;
-
-  lattePen: boolean;
-  latteCupRadius: number;
-  milkStartSpeed: number;
-  milkTimeToZeroSpeed: number;
-
-  showObstacle: boolean;
-  showStreamlines: boolean;
-  showVelocities: boolean;
-  showPressure: boolean;
-  showSmoke: boolean;
-  showSolid: boolean;
-
-  paused: boolean;
-  tunnel: TunnelType;
-  fluid: FluidPhysics;
-};
-
 export type TunnelType =
   | 'Wind Tunnel'
   | 'Paint Tunnel'
   | 'Tank Tunnel'
   | 'HiRes Tunnel'
   | 'Latte Tunnel';
+
+export type Scene = {
+  tunnel: TunnelType;
+  paused: boolean;
+  fluid: FluidPhysics;
+} & SceneConfig;
+
+const defaultSceneConfig = {
+  dt: 1.0 / 60.0,
+  gravity: 0,
+  overRelaxation: 1.9,
+  smokeDissipation: 1.0,
+  numIters: 20,
+  frameNr: 0,
+  resolution: 100,
+  drag: 1,
+
+  obstacleRadius: 0.15,
+  obstacleX: 0,
+  obstacleY: 0,
+
+  lattePen: false,
+  latteCupRadius: 0.4,
+  milkStartSpeed: 0.8,
+  milkTimeToZeroSpeed: 6,
+
+  showObstacle: true,
+  showStreamlines: false,
+  showVelocities: false,
+  showPressure: false,
+  showSmoke: true,
+  showSolid: false,
+};
+
+type SceneConfig = typeof defaultSceneConfig;
+
+function makeSceneConfig(tunnel: TunnelType): SceneConfig {
+  switch (tunnel) {
+    case 'HiRes Tunnel':
+      return {
+        ...defaultSceneConfig,
+        resolution: 200,
+        showPressure: true,
+        dt: 1 / 120,
+        numIters: 100,
+      };
+    case 'Paint Tunnel':
+      return {
+        ...defaultSceneConfig,
+        overRelaxation: 0.4,
+        obstacleRadius: 0.03,
+      };
+    case 'Tank Tunnel':
+      return {
+        ...defaultSceneConfig,
+        gravity: -9.81,
+        resolution: 50,
+        showPressure: true,
+        showSmoke: false,
+      };
+    case 'Latte Tunnel':
+      return {
+        ...defaultSceneConfig,
+        resolution: 180,
+        numIters: 20,
+        overRelaxation: 1,
+        obstacleRadius: 0.038,
+        drag: 0.97,
+      };
+    default:
+      return {
+        ...defaultSceneConfig,
+      };
+  }
+}
 
 function makeFluidPhysics(numY: number, canvasSize: Vec2, drag: number) {
   const domainHeight = 1.0;
@@ -46,44 +92,22 @@ function makeFluidPhysics(numY: number, canvasSize: Vec2, drag: number) {
   return new FluidPhysics(density, drag, numX, numY, h);
 }
 
-export function getSceneConfig(
+export function makeScene(
   tunnel: TunnelType,
   canvasSize: Vec2,
   resOverride?: number
 ): Scene {
-  const resolution = resOverride
-    ? resOverride
-    : tunnel === 'Tank Tunnel'
-    ? 50
-    : tunnel === 'Latte Tunnel'
-    ? 180
-    : tunnel === 'HiRes Tunnel'
-    ? 200
-    : 100;
-  const drag = tunnel === 'Latte Tunnel' ? 0.97 : 1;
+  const sceneConfig = makeSceneConfig(tunnel);
+  const newFluid = makeFluidPhysics(
+    resOverride ?? sceneConfig.resolution,
+    canvasSize,
+    sceneConfig.drag
+  );
   const scene: Scene = {
-    gravity: -9.81,
-    dt: 1.0 / 60.0,
-    numIters: 20,
-    frameNr: 0,
-    overRelaxation: 1.9,
-    obstacleX: 0.0,
-    obstacleY: 0.0,
-    obstacleRadius: 0.15,
-    smokeDissipation: 1.0,
-    paused: false,
     tunnel,
-    showObstacle: true,
-    showStreamlines: false,
-    showVelocities: false,
-    showPressure: false,
-    showSmoke: true,
-    showSolid: false,
-    lattePen: false,
-    latteCupRadius: 0.4,
-    milkStartSpeed: 0.8,
-    milkTimeToZeroSpeed: 6,
-    fluid: makeFluidPhysics(resolution, canvasSize, drag),
+    ...sceneConfig,
+    paused: false,
+    fluid: newFluid,
   };
 
   const f = scene.fluid;
@@ -96,12 +120,6 @@ export function getSceneConfig(
         f.s[i * n + j] = isSolid ? 0 : 1;
       }
     }
-
-    scene.gravity = -9.81;
-    scene.showPressure = true;
-    scene.showSmoke = false;
-    scene.showStreamlines = false;
-    scene.showVelocities = false;
   } else if (tunnel === 'Wind Tunnel' || tunnel === 'HiRes Tunnel') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
@@ -123,67 +141,15 @@ export function getSceneConfig(
     for (let j = minJ; j < maxJ; j++) f.m[j] = 0; // Black smoke = 0
 
     setObstacle(scene, 0.4, 0.5, true, true);
-
-    scene.gravity = 0.0;
-    scene.showPressure = false;
-    scene.showSmoke = true;
-    scene.showStreamlines = false;
-    scene.showVelocities = false;
-
-    if (tunnel === 'HiRes Tunnel') {
-      scene.dt = 1.0 / 120.0;
-      scene.numIters = 100;
-      scene.showPressure = true;
-    }
-  } else if (tunnel === 'Paint Tunnel') {
-    scene.gravity = 0.0;
-    scene.overRelaxation = 0.4;
-    scene.showPressure = false;
-    scene.showSmoke = true;
-    scene.showStreamlines = false;
-    scene.showVelocities = false;
-    scene.obstacleRadius = 0.03;
   } else if (tunnel === 'Latte Tunnel') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
         f.m[i * n + j] = 0; // Darkest Brown Smoke
       }
     }
-
-    scene.numIters = 20;
-    scene.gravity = 0;
-    scene.overRelaxation = 1;
-    scene.showPressure = false;
-    scene.showSmoke = true;
-    scene.showSolid = false;
-    scene.showStreamlines = false;
-    scene.showVelocities = false;
-    scene.obstacleRadius = 0.038;
-    scene.showObstacle = false;
-    scene.smokeDissipation = 1;
   }
 
   return scene;
-}
-
-function remap(
-  n: number,
-  start1: number,
-  stop1: number,
-  start2: number,
-  stop2: number
-) {
-  const val = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
-  return clamp(val, start2, stop2);
-}
-
-function clamp(n: number, min: number, max: number) {
-  if (min > max) {
-    const tmp = min;
-    min = max;
-    max = tmp;
-  }
-  return Math.max(min, Math.min(max, n));
 }
 
 export function setObstacle(
@@ -289,4 +255,24 @@ export function setObstacle(
       }
     }
   }
+}
+
+function remap(
+  n: number,
+  start1: number,
+  stop1: number,
+  start2: number,
+  stop2: number
+) {
+  const val = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+  return clamp(val, start2, stop2);
+}
+
+function clamp(n: number, min: number, max: number) {
+  if (min > max) {
+    const tmp = min;
+    min = max;
+    max = tmp;
+  }
+  return Math.max(min, Math.min(max, n));
 }

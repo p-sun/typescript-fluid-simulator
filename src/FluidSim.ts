@@ -1,6 +1,6 @@
 import { draw } from './FluidDraw';
 import { inputsForScene } from './FluidHTMLButtons';
-import { getSceneConfig, Scene, TunnelType, setObstacle } from './FluidScene';
+import { makeScene, Scene, TunnelType, setObstacle } from './FluidScene';
 import { Canvas, CanvasListener } from './Utils/Canvas';
 import Vec2 from './Utils/Vec2';
 
@@ -105,11 +105,7 @@ export function createFluidSim(options: {
 }) {
   cachedRes = options.resolutionOverride;
   const { canvasSize } = options;
-  const initialScene = getSceneConfig(
-    options.initialTunnel,
-    canvasSize,
-    cachedRes
-  );
+  const initialScene = makeScene(options.initialTunnel, canvasSize, cachedRes);
 
   const fluidCanvas = new Canvas(
     document.getElementById(options.canvasDomId) as HTMLCanvasElement,
@@ -152,7 +148,7 @@ function appendInputs(
   const onChangeScene = (tunnel: TunnelType, resOverride?: number) => {
     cachedRes = resOverride ?? cachedRes;
 
-    const scene = getSceneConfig(tunnel, canvasSize, cachedRes);
+    const scene = makeScene(tunnel, canvasSize, cachedRes);
     setDiv(scene);
     fluidSim.setScene(scene);
   };

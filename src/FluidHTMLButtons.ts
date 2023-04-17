@@ -37,6 +37,7 @@ export function inputsForScene(options: {
             },
             (val) => {
               scene.milkStartSpeed = val;
+              onChangeOverrides({ milkStartSpeed: val });
             }
           ),
           createSliderWithText(
@@ -50,6 +51,7 @@ export function inputsForScene(options: {
             },
             (val) => {
               scene.milkTimeToZeroSpeed = val;
+              onChangeOverrides({ milkTimeToZeroSpeed: val });
             }
           ),
         ]
@@ -106,8 +108,9 @@ export function inputsForScene(options: {
         label: 'Obstacle Radius',
         callbackOnlyOnPointerUp: false,
       },
-      (radius) => {
-        scene.obstacleRadius = radius;
+      (val) => {
+        scene.obstacleRadius = val;
+        onChangeOverrides({ obstacleRadius: val });
         onObstacleChanged();
       }
     ),
@@ -122,6 +125,7 @@ export function inputsForScene(options: {
       },
       (val) => {
         scene.overRelaxation = val;
+        onChangeOverrides({ overRelaxation: val });
       }
     ),
     createSliderWithText(

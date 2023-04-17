@@ -15,48 +15,8 @@ export function inputsForScene(options: {
     onChangeScene,
     onChangeOverrides,
   } = options;
-  const latteCheckbox =
-    'Latte Scene' === scene.tag
-      ? [
-          createCheckbox('Latte Pen', scene.lattePen, () => {
-            scene.lattePen = !scene.lattePen;
-          }),
-        ]
-      : [];
-  const latteSliders =
-    scene.tag === 'Latte Scene'
-      ? [
-          createSliderWithText(
-            {
-              initialValue: scene.milkStartSpeed,
-              min: 0,
-              max: 1.2,
-              stepSize: 0.001,
-              label: 'Milk Speed',
-              callbackOnlyOnPointerUp: false,
-            },
-            (val) => {
-              scene.milkStartSpeed = val;
-              onChangeOverrides({ milkStartSpeed: val });
-            }
-          ),
-          createSliderWithText(
-            {
-              initialValue: scene.milkTimeToZeroSpeed,
-              min: 3,
-              max: 18,
-              stepSize: 0.1,
-              label: 'Milk Time to 0 Speed',
-              callbackOnlyOnPointerUp: true,
-            },
-            (val) => {
-              scene.milkTimeToZeroSpeed = val;
-              onChangeOverrides({ milkTimeToZeroSpeed: val });
-            }
-          ),
-        ]
-      : [];
-  return [
+
+  let inputs: (string | HTMLElement)[] = [
     createBreak(),
     createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
       setText(!scene.paused ? 'Start' : 'Pause');
@@ -96,9 +56,51 @@ export function inputsForScene(options: {
     createCheckbox('Solid', scene.showSolid, () => {
       scene.showSolid = !scene.showSolid;
     }),
-    ...latteCheckbox,
-    createBreak(),
-    ...latteSliders,
+  ];
+
+  if (scene.tag === 'Latte Scene') {
+    inputs.push(
+      createCheckbox('Latte Pen', scene.lattePen, () => {
+        scene.lattePen = !scene.lattePen;
+      })
+    );
+  }
+
+  inputs.push(createBreak());
+  if (scene.tag === 'Latte Scene') {
+    inputs = inputs.concat([
+      createSliderWithText(
+        {
+          initialValue: scene.milkStartSpeed,
+          min: 0,
+          max: 1.2,
+          stepSize: 0.001,
+          label: 'Milk Speed',
+          callbackOnlyOnPointerUp: false,
+        },
+        (val) => {
+          scene.milkStartSpeed = val;
+          onChangeOverrides({ milkStartSpeed: val });
+        }
+      ),
+      createSliderWithText(
+        {
+          initialValue: scene.milkTimeToZeroSpeed,
+          min: 3,
+          max: 18,
+          stepSize: 0.1,
+          label: 'Time to 0 Milk Speed',
+          callbackOnlyOnPointerUp: true,
+        },
+        (val) => {
+          scene.milkTimeToZeroSpeed = val;
+          onChangeOverrides({ milkTimeToZeroSpeed: val });
+        }
+      ),
+    ]);
+  }
+
+  inputs.push(
     createSliderWithText(
       {
         initialValue: scene.obstacleRadius,
@@ -113,7 +115,10 @@ export function inputsForScene(options: {
         onChangeOverrides({ obstacleRadius: val });
         onObstacleChanged();
       }
-    ),
+    )
+  );
+
+  inputs = inputs.concat([
     createSliderWithText(
       {
         initialValue: scene.overRelaxation,
@@ -157,7 +162,9 @@ export function inputsForScene(options: {
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
     `\nLeft drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Scene" to restart.`,
-  ];
+  ]);
+
+  return inputs;
 }
 
 function createBreak() {

@@ -6,7 +6,7 @@ I made a latte art simulator where the process of making latte art using it feel
 
 ## Play with Latte Art! https://typescript-lzex4b.stackblitz.io
 
-Left drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Tunnel" to restart.
+Left drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Scene" to restart.
 
 Latte Art with Code: https://stackblitz.com/edit/typescript-lzex4b?file=index.ts
 

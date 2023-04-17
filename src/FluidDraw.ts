@@ -66,9 +66,9 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
         }
       } else if (scene.showSmoke) {
         const s = f.m[i * n + j];
-        if (scene.tunnel === 'Paint Tunnel') {
+        if (scene.tag === 'Paint Scene') {
           color = getSciColor(s, 0.0, 1.0);
-        } else if (scene.tunnel === 'Latte Tunnel') {
+        } else if (scene.tag === 'Latte Scene') {
           const lx = i + 0.5 - f.numX / 2;
           const ly = j + 0.5 - f.numY / 2;
           const isOutsideCup = lx * lx + ly * ly > cupSquared;
@@ -116,7 +116,7 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
   c.putImageData(id, 0, 0);
 
   if (scene.showVelocities) {
-    c.strokeStyle = scene.tunnel === 'HiRes Tunnel' ? '#AAAAAA' : '#000000';
+    c.strokeStyle = scene.tag === 'HiRes Scene' ? '#AAAAAA' : '#000000';
     const scale = 0.02;
 
     for (let i = 0; i < f.numX; i++) {
@@ -194,7 +194,7 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
     c.lineWidth = 1.0;
   }
 
-  if (scene.tunnel === 'Latte Tunnel') {
+  if (scene.tag === 'Latte Scene') {
     c.lineWidth = cL(0.03);
     c.strokeStyle = '#ffffff';
     c.beginPath();

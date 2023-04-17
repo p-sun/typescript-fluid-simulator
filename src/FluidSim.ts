@@ -1,6 +1,6 @@
 import { draw } from './FluidDraw';
 import { inputsForScene } from './FluidHTMLButtons';
-import { makeScene, Scene, TunnelType, setObstacle } from './FluidScene';
+import { makeScene, Scene, SceneTag, setObstacle } from './FluidScene';
 import { Canvas, CanvasListener } from './Utils/Canvas';
 import Vec2 from './Utils/Vec2';
 
@@ -46,8 +46,8 @@ export class FluidSim implements CanvasListener {
   simulate() {
     this.scene.fluid.simulate(this.scene, this.scene.dt);
     if (
-      this.scene.tunnel !== 'Latte Tunnel' ||
-      (this.scene.tunnel == 'Latte Tunnel' && this.mouseDown)
+      this.scene.tag !== 'Latte Scene' ||
+      (this.scene.tag == 'Latte Scene' && this.mouseDown)
     ) {
       this.scene.frameNr = this.scene.frameNr + 1;
     }
@@ -73,7 +73,7 @@ export class FluidSim implements CanvasListener {
 
   endDrag() {
     this.mouseDown = false;
-    if (this.scene.tunnel === 'Latte Tunnel') {
+    if (this.scene.tag === 'Latte Scene') {
       setObstacle(this.scene, 0, 0, true);
     }
   }
@@ -92,11 +92,11 @@ export class FluidSim implements CanvasListener {
   }
 }
 
-// Cache the resolution override, so that we can keep it when switching tunnels.
+// Cache the resolution override, so that we can keep it when switching scenes.
 let cachedRes: number | undefined;
 
 export function createFluidSim(options: {
-  initialTunnel: TunnelType;
+  initialScene: SceneTag;
   canvasDomId: string;
   buttonsDomId: string;
   canvasSize: Vec2;
@@ -105,7 +105,7 @@ export function createFluidSim(options: {
 }) {
   cachedRes = options.resolutionOverride;
   const { canvasSize } = options;
-  const initialScene = makeScene(options.initialTunnel, canvasSize, cachedRes);
+  const initialScene = makeScene(options.initialScene, canvasSize, cachedRes);
 
   const fluidCanvas = new Canvas(
     document.getElementById(options.canvasDomId) as HTMLCanvasElement,
@@ -145,10 +145,10 @@ function appendInputs(
       })
     );
   };
-  const onChangeScene = (tunnel: TunnelType, resOverride?: number) => {
+  const onChangeScene = (tag: SceneTag, resOverride?: number) => {
     cachedRes = resOverride ?? cachedRes;
 
-    const scene = makeScene(tunnel, canvasSize, cachedRes);
+    const scene = makeScene(tag, canvasSize, cachedRes);
     setDiv(scene);
     fluidSim.setScene(scene);
   };

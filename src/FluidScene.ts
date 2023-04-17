@@ -1,15 +1,15 @@
 import { FluidPhysics } from './FluidPhysics';
 import Vec2 from './Utils/Vec2';
 
-export type TunnelType =
-  | 'Wind Tunnel'
-  | 'Paint Tunnel'
-  | 'Tank Tunnel'
-  | 'HiRes Tunnel'
-  | 'Latte Tunnel';
+export type SceneTag =
+  | 'Wind Scene'
+  | 'Paint Scene'
+  | 'Tank Scene'
+  | 'HiRes Scene'
+  | 'Latte Scene';
 
 export type Scene = {
-  tunnel: TunnelType;
+  tag: SceneTag;
   paused: boolean;
   fluid: FluidPhysics;
 } & SceneConfig;
@@ -43,9 +43,9 @@ const defaultSceneConfig = {
 
 type SceneConfig = typeof defaultSceneConfig;
 
-function makeSceneConfig(tunnel: TunnelType): SceneConfig {
-  switch (tunnel) {
-    case 'HiRes Tunnel':
+function makeSceneConfig(tag: SceneTag): SceneConfig {
+  switch (tag) {
+    case 'HiRes Scene':
       return {
         ...defaultSceneConfig,
         resolution: 200,
@@ -53,13 +53,13 @@ function makeSceneConfig(tunnel: TunnelType): SceneConfig {
         dt: 1 / 120,
         numIters: 100,
       };
-    case 'Paint Tunnel':
+    case 'Paint Scene':
       return {
         ...defaultSceneConfig,
         overRelaxation: 0.4,
         obstacleRadius: 0.03,
       };
-    case 'Tank Tunnel':
+    case 'Tank Scene':
       return {
         ...defaultSceneConfig,
         gravity: -9.81,
@@ -67,7 +67,7 @@ function makeSceneConfig(tunnel: TunnelType): SceneConfig {
         showPressure: true,
         showSmoke: false,
       };
-    case 'Latte Tunnel':
+    case 'Latte Scene':
       return {
         ...defaultSceneConfig,
         resolution: 180,
@@ -93,18 +93,18 @@ function makeFluidPhysics(numY: number, canvasSize: Vec2, drag: number) {
 }
 
 export function makeScene(
-  tunnel: TunnelType,
+  tag: SceneTag,
   canvasSize: Vec2,
   resOverride?: number
 ): Scene {
-  const sceneConfig = makeSceneConfig(tunnel);
+  const sceneConfig = makeSceneConfig(tag);
   const newFluid = makeFluidPhysics(
     resOverride ?? sceneConfig.resolution,
     canvasSize,
     sceneConfig.drag
   );
   const scene: Scene = {
-    tunnel,
+    tag: tag,
     ...sceneConfig,
     paused: false,
     fluid: newFluid,
@@ -113,14 +113,14 @@ export function makeScene(
   const f = scene.fluid;
   const n = f.numY;
 
-  if (tunnel === 'Tank Tunnel') {
+  if (tag === 'Tank Scene') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
         const isSolid = i == 0 || i == f.numX - 1 || j == 0; // Left, right, bottom wall
         f.s[i * n + j] = isSolid ? 0 : 1;
       }
     }
-  } else if (tunnel === 'Wind Tunnel' || tunnel === 'HiRes Tunnel') {
+  } else if (tag === 'Wind Scene' || tag === 'HiRes Scene') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
         const isSolid = i == 0 || j == 0 || j == f.numY - 1; // Left, bottom, top wall
@@ -141,7 +141,7 @@ export function makeScene(
     for (let j = minJ; j < maxJ; j++) f.m[j] = 0; // Black smoke = 0
 
     setObstacle(scene, 0.4, 0.5, true, true);
-  } else if (tunnel === 'Latte Tunnel') {
+  } else if (tag === 'Latte Scene') {
     for (let i = 0; i < f.numX; i++) {
       for (let j = 0; j < f.numY; j++) {
         f.m[i * n + j] = 0; // Darkest Brown Smoke
@@ -178,7 +178,7 @@ export function setObstacle(
   const latteCupInner = latteCupOuter - 0.01;
   const latteMilk = isLeft && !scene.lattePen;
   let latteV = 0.0; // Latte velocity
-  if (scene.tunnel === 'Latte Tunnel') {
+  if (scene.tag === 'Latte Scene') {
     if (isLeft) {
       // Over 5 secs since left mouse press, the radius shrinks from r to 0.53r.
       r = r * remap(scene.frameNr, 0, 6 / scene.dt, 1, 0.4);
@@ -201,7 +201,7 @@ export function setObstacle(
       const dx = (i + 0.5) * f.h - x;
       const dy = (j + 0.5) * f.h - y;
       const insideObstacle = dx * dx + dy * dy < r * r;
-      if (scene.tunnel === 'Latte Tunnel') {
+      if (scene.tag === 'Latte Scene') {
         const lx = (i + 0.5 - f.numX / 2) * f.h;
         const ly = (j + 0.5 - f.numY / 2) * f.h;
         const dFromCenter = lx * lx + ly * ly;
@@ -235,7 +235,7 @@ export function setObstacle(
           // Set cell to solid
           f.s[i * n + j] = 0.0;
 
-          if (scene.tunnel === 'Paint Tunnel') {
+          if (scene.tag === 'Paint Scene') {
             // Set smoke to # based on time, between 0 & 1 inclusive
             f.m[i * n + j] = 0.5 + 0.5 * Math.sin(0.1 * scene.frameNr);
           } else {

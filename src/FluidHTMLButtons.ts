@@ -1,15 +1,15 @@
-import { Scene, TunnelType } from './FluidScene';
+import { Scene, SceneTag } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
 export function inputsForScene(options: {
   scene: Scene;
   onPauseToggled: () => void;
   onObstacleChanged: () => void;
-  onChangeScene: (tunnel: TunnelType, resOverride?: number) => void;
+  onChangeScene: (tag: SceneTag, resOverride?: number) => void;
 }): (string | HTMLElement)[] {
   const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
   const latteCheckbox =
-    'Latte Tunnel' === scene.tunnel
+    'Latte Scene' === scene.tag
       ? [
           createCheckbox('Latte Pen', scene.lattePen, () => {
             scene.lattePen = !scene.lattePen;
@@ -17,7 +17,7 @@ export function inputsForScene(options: {
         ]
       : [];
   const latteSliders =
-    scene.tunnel === 'Latte Tunnel'
+    scene.tag === 'Latte Scene'
       ? [
           createSliderWithText(
             {
@@ -54,19 +54,19 @@ export function inputsForScene(options: {
       onPauseToggled();
     }),
     createButton('Wind Scene', () => {
-      onChangeScene('Wind Tunnel');
+      onChangeScene('Wind Scene');
     }),
     createButton('Paint Scene', () => {
-      onChangeScene('Paint Tunnel');
+      onChangeScene('Paint Scene');
     }),
     createButton('Tank Scene', () => {
-      onChangeScene('Tank Tunnel');
+      onChangeScene('Tank Scene');
     }),
     createButton('HiRes Scene', () => {
-      onChangeScene('HiRes Tunnel');
+      onChangeScene('HiRes Scene');
     }),
     createButton('Latte Scene', () => {
-      onChangeScene('Latte Tunnel');
+      onChangeScene('Latte Scene');
     }),
     createBreak(),
     createCheckbox('Streamlines', scene.showStreamlines, () => {
@@ -140,11 +140,11 @@ export function inputsForScene(options: {
         callbackOnlyOnPointerUp: true,
       },
       (resOverride) => {
-        onChangeScene(scene.tunnel, resOverride > 0 ? resOverride : undefined);
+        onChangeScene(scene.tag, resOverride > 0 ? resOverride : undefined);
       }
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
-    `\nLeft drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Tunnel" to restart.`,
+    `\nLeft drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool. Click "Latte Scene" to restart.`,
   ];
 }
 

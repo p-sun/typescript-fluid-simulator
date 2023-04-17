@@ -22,19 +22,19 @@ export function inputsForScene(options: {
       setText(!scene.paused ? 'Start' : 'Pause');
       onPauseToggled();
     }),
-    createButton('Wind Scene', () => {
+    createButton('Wind scene', () => {
       onChangeScene('Wind Scene');
     }),
-    createButton('Paint Scene', () => {
+    createButton('Paint scene', () => {
       onChangeScene('Paint Scene');
     }),
-    createButton('Tank Scene', () => {
+    createButton('Tank scene', () => {
       onChangeScene('Tank Scene');
     }),
-    createButton('HiRes Scene', () => {
+    createButton('HiRes scene', () => {
       onChangeScene('HiRes Scene');
     }),
-    createButton('Latte Scene', () => {
+    createButton('Latte scene', () => {
       onChangeScene('Latte Scene');
     }),
     createButton('Reset', () => {
@@ -63,7 +63,7 @@ export function inputsForScene(options: {
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
-      createCheckbox('Latte Pen', scene.lattePen, () => {
+      createCheckbox('Latte pen', scene.lattePen, () => {
         scene.lattePen = !scene.lattePen;
       })
     );
@@ -78,7 +78,7 @@ export function inputsForScene(options: {
           min: 0,
           max: 1.2,
           stepSize: 0.001,
-          label: 'Milk Speed',
+          label: 'Milk speed',
           callbackOnlyOnPointerUp: false,
         },
         (val) => {
@@ -92,7 +92,7 @@ export function inputsForScene(options: {
           min: 3,
           max: 18,
           stepSize: 0.1,
-          label: 'Time to 0 Milk Speed',
+          label: 'Time to 0 milk speed',
           callbackOnlyOnPointerUp: true,
         },
         (val) => {
@@ -110,7 +110,7 @@ export function inputsForScene(options: {
         min: 0.005,
         max: 0.2,
         stepSize: 0.005,
-        label: 'Obstacle Radius',
+        label: 'Obstacle radius',
         callbackOnlyOnPointerUp: false,
       },
       (val) => {
@@ -129,7 +129,7 @@ export function inputsForScene(options: {
           min: 0.1,
           max: 25,
           stepSize: 0.1,
-          label: 'Time to Min Radius',
+          label: 'Time to min radius',
           callbackOnlyOnPointerUp: true,
         },
         (val) => {
@@ -147,7 +147,7 @@ export function inputsForScene(options: {
         min: 0.05,
         max: 1.95,
         stepSize: 0.05,
-        label: 'Over Relaxation',
+        label: 'Over relaxation',
         callbackOnlyOnPointerUp: false,
       },
       (val) => {

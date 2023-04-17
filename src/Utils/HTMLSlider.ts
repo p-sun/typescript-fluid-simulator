@@ -24,6 +24,7 @@ function createSlider(options: SliderOptions) {
   slider.max = options.max.toString();
   slider.step = options.stepSize?.toString() ?? 'any';
   slider.value = options.initialValue.toString();
+  slider.style.flexGrow = '1';
   return slider;
 }
 
@@ -45,6 +46,7 @@ function createContainer(
   container.style.backgroundColor = '#cfcfcf';
   container.style.padding = '4pt';
   container.style.borderRadius = '4pt';
+  container.style.flexGrow = '1';
 
   if (options.label) {
     const label = document.createElement('div');

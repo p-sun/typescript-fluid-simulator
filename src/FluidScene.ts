@@ -28,17 +28,19 @@ const defaultSceneConfig = {
   obstacleX: 0,
   obstacleY: 0,
 
-  lattePen: false,
-  latteCupRadius: 0.4,
-  milkStartSpeed: 0.8,
-  milkTimeToZeroSpeed: 6,
-
   showObstacle: true,
   showStreamlines: false,
   showVelocities: false,
   showPressure: false,
   showSmoke: true,
   showSolid: false,
+
+  // Latte Art Specific
+  lattePen: false,
+  latteCupRadius: 0.4,
+  milkStartSpeed: 0.8,
+  timeToZeroMilkSpeed: 6.0,
+  timeToMinObstacleRadius: 7.0,
 };
 
 export type SceneConfig = typeof defaultSceneConfig;
@@ -72,8 +74,8 @@ function makeSceneConfig(tag: SceneTag): SceneConfig {
         ...defaultSceneConfig,
         resolution: 180,
         numIters: 20,
-        overRelaxation: 1,
-        obstacleRadius: 0.038,
+        overRelaxation: 1.4,
+        obstacleRadius: 0.036,
         drag: 0.97,
       };
     default:
@@ -179,18 +181,16 @@ export function setObstacle(
   const latteCupOuter = scene.latteCupRadius;
   const latteCupInner = latteCupOuter - 0.01;
   const latteMilk = isLeft && !scene.lattePen;
+  const minRadius = 0.02;
   let latteV = 0.0; // Latte velocity
   if (scene.tag === 'Latte Scene') {
+    const framesTo0Speed = scene.timeToZeroMilkSpeed / scene.dt;
+    const framesToMinRadius = scene.timeToMinObstacleRadius / scene.dt;
+
     if (isLeft) {
-      // Over 5 secs since left mouse press, the radius shrinks from r to 0.53r.
-      r = r * remap(scene.frameNr, 0, 6 / scene.dt, 1, 0.4);
-      latteV = remap(
-        scene.frameNr,
-        0,
-        scene.milkTimeToZeroSpeed / scene.dt,
-        scene.milkStartSpeed,
-        0
-      );
+      latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
+      // Over n secs since left mouse press, the radius shrinks from r to 0.02.
+      r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
     } else {
       r = 0.01;
       latteV = 0.0;

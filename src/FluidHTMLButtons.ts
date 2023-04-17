@@ -85,7 +85,7 @@ export function inputsForScene(options: {
       ),
       createSliderWithText(
         {
-          initialValue: scene.milkTimeToZeroSpeed,
+          initialValue: scene.timeToZeroMilkSpeed,
           min: 3,
           max: 18,
           stepSize: 0.1,
@@ -93,8 +93,8 @@ export function inputsForScene(options: {
           callbackOnlyOnPointerUp: true,
         },
         (val) => {
-          scene.milkTimeToZeroSpeed = val;
-          onChangeOverrides({ milkTimeToZeroSpeed: val });
+          scene.timeToZeroMilkSpeed = val;
+          onChangeOverrides({ timeToZeroMilkSpeed: val });
         }
       ),
     ]);
@@ -118,6 +118,25 @@ export function inputsForScene(options: {
     )
   );
 
+  if (scene.tag === 'Latte Scene') {
+    inputs.push(
+      createSliderWithText(
+        {
+          initialValue: scene.timeToMinObstacleRadius,
+          min: 0.1,
+          max: 25,
+          stepSize: 0.1,
+          label: 'Time to Min Radius',
+          callbackOnlyOnPointerUp: true,
+        },
+        (val) => {
+          scene.timeToMinObstacleRadius = val;
+          onChangeOverrides({ timeToMinObstacleRadius: val });
+        }
+      )
+    );
+  }
+
   inputs = inputs.concat([
     createSliderWithText(
       {
@@ -133,19 +152,19 @@ export function inputsForScene(options: {
         onChangeOverrides({ overRelaxation: val });
       }
     ),
-    createSliderWithText(
-      {
-        initialValue: 1 - scene.smokeDissipation,
-        min: 0,
-        max: 0.01,
-        stepSize: 0.001,
-        label: 'Dissipation',
-        callbackOnlyOnPointerUp: false,
-      },
-      (val) => {
-        scene.smokeDissipation = 1 - val;
-      }
-    ),
+    // createSliderWithText(
+    //   {
+    //     initialValue: 1 - scene.smokeDissipation,
+    //     min: 0,
+    //     max: 0.01,
+    //     stepSize: 0.001,
+    //     label: 'Dissipation',
+    //     callbackOnlyOnPointerUp: false,
+    //   },
+    //   (val) => {
+    //     scene.smokeDissipation = 1 - val;
+    //   }
+    // ),
     createSliderWithText(
       {
         initialValue: scene.fluid.numY,

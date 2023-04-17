@@ -189,8 +189,10 @@ export function setObstacle(
 
     if (isLeft) {
       latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
-      // Over n secs since left mouse press, the radius shrinks from r to 0.02.
-      r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
+      if (scene.frameNr <= framesToMinRadius) {
+        // Over some secs after mouse press, the radius shrinks from r to 0.02
+        r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
+      }
     } else {
       r = 0.01;
       latteV = 0.0;

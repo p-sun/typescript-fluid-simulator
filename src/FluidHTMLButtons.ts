@@ -53,19 +53,19 @@ export function inputsForScene(options: {
       setText(!scene.paused ? 'Start' : 'Pause');
       onPauseToggled();
     }),
-    createButton('Wind Tunnel', () => {
+    createButton('Wind Scene', () => {
       onChangeScene('Wind Tunnel');
     }),
-    createButton('Paint Tunnel', () => {
+    createButton('Paint Scene', () => {
       onChangeScene('Paint Tunnel');
     }),
-    createButton('Tank Tunnel', () => {
+    createButton('Tank Scene', () => {
       onChangeScene('Tank Tunnel');
     }),
-    createButton('HiRes Tunnel', () => {
+    createButton('HiRes Scene', () => {
       onChangeScene('HiRes Tunnel');
     }),
-    createButton('Latte Tunnel', () => {
+    createButton('Latte Scene', () => {
       onChangeScene('Latte Tunnel');
     }),
     createBreak(),

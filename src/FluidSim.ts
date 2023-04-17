@@ -1,6 +1,12 @@
 import { draw } from './FluidDraw';
 import { inputsForScene } from './FluidHTMLButtons';
-import { makeScene, Scene, SceneTag, setObstacle } from './FluidScene';
+import {
+  makeScene,
+  Scene,
+  SceneConfig,
+  SceneTag,
+  setObstacle,
+} from './FluidScene';
 import { Canvas, CanvasListener } from './Utils/Canvas';
 import Vec2 from './Utils/Vec2';
 
@@ -92,8 +98,8 @@ export class FluidSim implements CanvasListener {
   }
 }
 
-// Cache the resolution override, so that we can keep it when switching scenes.
-let cachedRes: number | undefined;
+// Cache slider overrides, so that we can keep it when switching scenes.
+let overrides: Partial<SceneConfig> = {};
 
 export function createFluidSim(options: {
   initialScene: SceneTag;
@@ -103,9 +109,10 @@ export function createFluidSim(options: {
   autostart: boolean;
   resolutionOverride?: number;
 }) {
-  cachedRes = options.resolutionOverride;
+  overrides.resolution = options.resolutionOverride;
+
   const { canvasSize } = options;
-  const initialScene = makeScene(options.initialScene, canvasSize, cachedRes);
+  const initialScene = makeScene(options.initialScene, canvasSize, overrides);
 
   const fluidCanvas = new Canvas(
     document.getElementById(options.canvasDomId) as HTMLCanvasElement,
@@ -142,15 +149,19 @@ function appendInputs(
           fluidSim.updateObstacle();
         },
         onChangeScene,
+        onChangeOverrides,
       })
     );
   };
-  const onChangeScene = (tag: SceneTag, resOverride?: number) => {
-    cachedRes = resOverride ?? cachedRes;
 
-    const scene = makeScene(tag, canvasSize, cachedRes);
+  const onChangeScene = (tag: SceneTag) => {
+    const scene = makeScene(tag, canvasSize, overrides);
     setDiv(scene);
     fluidSim.setScene(scene);
+  };
+
+  const onChangeOverrides = (newOverrides: Partial<SceneConfig>) => {
+    overrides = { ...overrides, ...(newOverrides ?? {}) };
   };
 
   setDiv(initialScene);

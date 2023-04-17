@@ -41,7 +41,7 @@ const defaultSceneConfig = {
   showSolid: false,
 };
 
-type SceneConfig = typeof defaultSceneConfig;
+export type SceneConfig = typeof defaultSceneConfig;
 
 function makeSceneConfig(tag: SceneTag): SceneConfig {
   switch (tag) {
@@ -95,19 +95,21 @@ function makeFluidPhysics(numY: number, canvasSize: Vec2, drag: number) {
 export function makeScene(
   tag: SceneTag,
   canvasSize: Vec2,
-  resOverride?: number
+  overrides: Partial<SceneConfig>
 ): Scene {
-  const sceneConfig = makeSceneConfig(tag);
-  const newFluid = makeFluidPhysics(
-    resOverride ?? sceneConfig.resolution,
-    canvasSize,
-    sceneConfig.drag
-  );
+  const sceneConfig = {
+    ...makeSceneConfig(tag),
+    ...removeKeysWithUndefinedValues({ ...overrides }),
+  };
   const scene: Scene = {
     tag: tag,
     ...sceneConfig,
     paused: false,
-    fluid: newFluid,
+    fluid: makeFluidPhysics(
+      sceneConfig.resolution,
+      canvasSize,
+      sceneConfig.drag
+    ),
   };
 
   const f = scene.fluid;
@@ -276,3 +278,10 @@ function clamp(n: number, min: number, max: number) {
   }
   return Math.max(min, Math.min(max, n));
 }
+
+const removeKeysWithUndefinedValues = <T extends { [key: string]: unknown }>(
+  obj: T
+): T => {
+  Object.keys(obj).forEach((key) => obj[key] === undefined && delete obj[key]);
+  return obj;
+};

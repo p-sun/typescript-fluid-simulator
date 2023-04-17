@@ -1,13 +1,20 @@
-import { Scene, SceneTag } from './FluidScene';
+import { Scene, SceneConfig, SceneTag } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
 export function inputsForScene(options: {
   scene: Scene;
   onPauseToggled: () => void;
   onObstacleChanged: () => void;
-  onChangeScene: (tag: SceneTag, resOverride?: number) => void;
+  onChangeOverrides: (newOverrides: Partial<SceneConfig>) => void;
+  onChangeScene: (tag: SceneTag) => void;
 }): (string | HTMLElement)[] {
-  const { scene, onPauseToggled, onObstacleChanged, onChangeScene } = options;
+  const {
+    scene,
+    onPauseToggled,
+    onObstacleChanged,
+    onChangeScene,
+    onChangeOverrides,
+  } = options;
   const latteCheckbox =
     'Latte Scene' === scene.tag
       ? [
@@ -139,8 +146,9 @@ export function inputsForScene(options: {
         label: 'Resolution',
         callbackOnlyOnPointerUp: true,
       },
-      (resOverride) => {
-        onChangeScene(scene.tag, resOverride > 0 ? resOverride : undefined);
+      (resolution) => {
+        onChangeOverrides({ resolution });
+        onChangeScene(scene.tag);
       }
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,

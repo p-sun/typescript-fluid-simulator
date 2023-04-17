@@ -70,38 +70,6 @@ export function inputsForScene(options: {
   }
 
   inputs.push(createBreak());
-  if (scene.tag === 'Latte Scene') {
-    inputs = inputs.concat([
-      createSliderWithText(
-        {
-          initialValue: scene.milkStartSpeed,
-          min: 0,
-          max: 1.2,
-          stepSize: 0.001,
-          label: 'Milk speed',
-          callbackOnlyOnPointerUp: false,
-        },
-        (val) => {
-          scene.milkStartSpeed = val;
-          onChangeOverrides({ milkStartSpeed: val });
-        }
-      ),
-      createSliderWithText(
-        {
-          initialValue: scene.timeToZeroMilkSpeed,
-          min: 3,
-          max: 18,
-          stepSize: 0.1,
-          label: 'Time to 0 milk speed',
-          callbackOnlyOnPointerUp: true,
-        },
-        (val) => {
-          scene.timeToZeroMilkSpeed = val;
-          onChangeOverrides({ timeToZeroMilkSpeed: val });
-        }
-      ),
-    ]);
-  }
 
   inputs.push(
     createSliderWithText(
@@ -138,6 +106,39 @@ export function inputsForScene(options: {
         }
       )
     );
+  }
+
+  if (scene.tag === 'Latte Scene') {
+    inputs = inputs.concat([
+      createSliderWithText(
+        {
+          initialValue: scene.milkStartSpeed,
+          min: 0,
+          max: 1.2,
+          stepSize: 0.001,
+          label: 'Milk speed',
+          callbackOnlyOnPointerUp: false,
+        },
+        (val) => {
+          scene.milkStartSpeed = val;
+          onChangeOverrides({ milkStartSpeed: val });
+        }
+      ),
+      createSliderWithText(
+        {
+          initialValue: scene.timeToZeroMilkSpeed,
+          min: 3,
+          max: 18,
+          stepSize: 0.1,
+          label: 'Time to 0 milk speed',
+          callbackOnlyOnPointerUp: true,
+        },
+        (val) => {
+          scene.timeToZeroMilkSpeed = val;
+          onChangeOverrides({ timeToZeroMilkSpeed: val });
+        }
+      ),
+    ]);
   }
 
   inputs = inputs.concat([

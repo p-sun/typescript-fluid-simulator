@@ -77,6 +77,7 @@ function makeSceneConfig(tag: SceneTag): SceneConfig {
         overRelaxation: 1.4,
         obstacleRadius: 0.036,
         drag: 0.97,
+        showObstacle: false,
       };
     default:
       return {

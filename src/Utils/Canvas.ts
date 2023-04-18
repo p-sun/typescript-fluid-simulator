@@ -69,8 +69,6 @@ export class Canvas {
       return { x: clientX - rect.x, y: clientY - rect.y };
     };
 
-    document.addEventListener('contextmenu', (event) => event.preventDefault());
-
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
         case 'p':
@@ -80,6 +78,11 @@ export class Canvas {
           this.#listener?.keyDown('m');
           break;
       }
+    });
+
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
     });
 
     this.#canvas.addEventListener('mousedown', (e) => {
@@ -97,12 +100,10 @@ export class Canvas {
     });
 
     this.#canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       const { x, y } = getPos(e.touches[0].clientX, e.touches[0].clientY);
       this.#listener?.startDrag(x, y, e.touches.length === 1);
-    });
-
-    this.#canvas.addEventListener('touchend', (e) => {
-      this.#listener?.endDrag();
     });
 
     this.#canvas.addEventListener(
@@ -115,5 +116,9 @@ export class Canvas {
       },
       { passive: false }
     );
+
+    this.#canvas.addEventListener('touchend', (e) => {
+      this.#listener?.endDrag();
+    });
   }
 }

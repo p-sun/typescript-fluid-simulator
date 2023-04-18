@@ -1,0 +1,9 @@
+body {
+  font-family: verdana;
+  font-size: 15px;
+}
+.notSelectable {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

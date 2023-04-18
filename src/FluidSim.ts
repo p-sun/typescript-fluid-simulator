@@ -154,7 +154,10 @@ function appendInputs(
     );
   };
 
-  const onChangeScene = (tag: SceneTag) => {
+  const onChangeScene = (tag: SceneTag, clearOverrides: boolean) => {
+    if (clearOverrides) {
+      overrides = {};
+    }
     const scene = makeScene(tag, canvasSize, overrides);
     setDiv(scene);
     fluidSim.setScene(scene);

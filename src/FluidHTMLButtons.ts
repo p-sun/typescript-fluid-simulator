@@ -6,7 +6,7 @@ export function inputsForScene(options: {
   onPauseToggled: () => void;
   onObstacleChanged: () => void;
   onChangeOverrides: (newOverrides: Partial<SceneConfig>) => void;
-  onChangeScene: (tag: SceneTag) => void;
+  onChangeScene: (tag: SceneTag, clearOverrides: boolean) => void;
 }): (string | HTMLElement)[] {
   const {
     scene,
@@ -23,22 +23,22 @@ export function inputsForScene(options: {
       onPauseToggled();
     }),
     createButton('Wind scene', () => {
-      onChangeScene('Wind Scene');
+      onChangeScene('Wind Scene', true);
     }),
     createButton('Paint scene', () => {
-      onChangeScene('Paint Scene');
+      onChangeScene('Paint Scene', true);
     }),
     createButton('Tank scene', () => {
-      onChangeScene('Tank Scene');
+      onChangeScene('Tank Scene', true);
     }),
     createButton('HiRes scene', () => {
-      onChangeScene('HiRes Scene');
+      onChangeScene('HiRes Scene', true);
     }),
     createButton('Latte scene', () => {
-      onChangeScene('Latte Scene');
+      onChangeScene('Latte Scene', true);
     }),
-    createButton('Reset', () => {
-      onChangeScene(scene.tag);
+    createButton('Clear', () => {
+      onChangeScene(scene.tag, false);
     }),
     createBreak(),
     createCheckbox('Streamlines', scene.showStreamlines, () => {
@@ -180,7 +180,7 @@ export function inputsForScene(options: {
       },
       (resolution) => {
         onChangeOverrides({ resolution });
-        onChangeScene(scene.tag);
+        onChangeScene(scene.tag, false);
       }
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,

@@ -1,4 +1,7 @@
-<img src="https://user-images.githubusercontent.com/9044578/232227994-b83b7042-dd37-459b-9805-a759c0fa3d75.png" width="300">
+<div style="display:flex">
+  <img src="https://user-images.githubusercontent.com/9044578/232227994-b83b7042-dd37-459b-9805-a759c0fa3d75.png" height="300">
+  <img src="https://user-images.githubusercontent.com/9044578/232897252-d6fe52eb-9247-4cc4-8ad3-288ae7e7f455.png" height="300">
+</div>
 
 # Latte Art Fluid Simulator
 

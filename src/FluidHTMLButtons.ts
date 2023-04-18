@@ -78,7 +78,7 @@ export function inputsForScene(options: {
         min: 0.005,
         max: 0.2,
         stepSize: 0.005,
-        label: 'Obstacle radius',
+        label: scene.tag === 'Latte Scene' ? 'Milk radius' : 'Obstacle radius',
         callbackOnlyOnPointerUp: false,
       },
       (val) => {
@@ -127,7 +127,7 @@ export function inputsForScene(options: {
       createSliderWithText(
         {
           initialValue: scene.timeToZeroMilkSpeed,
-          min: 3,
+          min: 0.1,
           max: 18,
           stepSize: 0.1,
           label: 'Time to 0 milk speed',

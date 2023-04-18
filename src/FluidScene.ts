@@ -39,8 +39,8 @@ const defaultSceneConfig = {
   lattePen: false,
   latteCupRadius: 0.4,
   milkStartSpeed: 0.8,
-  timeToZeroMilkSpeed: 6.0,
-  timeToMinObstacleRadius: 7.0,
+  timeToZeroMilkSpeed: 7.0,
+  timeToMinObstacleRadius: 8.0,
 };
 
 export type SceneConfig = typeof defaultSceneConfig;
@@ -182,7 +182,7 @@ export function setObstacle(
   const latteCupOuter = scene.latteCupRadius;
   const latteCupInner = latteCupOuter - 0.01;
   const latteMilk = isLeft && !scene.lattePen;
-  const minRadius = 0.02;
+  const minRadius = 0.015;
   let latteV = 0.0; // Latte velocity
   if (scene.tag === 'Latte Scene') {
     const framesTo0Speed = scene.timeToZeroMilkSpeed / scene.dt;
@@ -191,11 +191,11 @@ export function setObstacle(
     if (isLeft) {
       latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
       if (scene.frameNr <= framesToMinRadius) {
-        // Over some secs after mouse press, the radius shrinks from r to 0.02
+        // Over some secs after mouse press, the radius shrinks from r to minRadius
         r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
       }
     } else {
-      r = 0.01;
+      r = 0.005;
       latteV = 0.0;
     }
   }

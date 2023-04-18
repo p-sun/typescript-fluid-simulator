@@ -3,7 +3,7 @@
 import { createFluidSim } from './src/FluidSim';
 import Vec2 from './src/Utils/Vec2';
 
-const size = Math.min(window.innerWidth - 40, window.innerHeight - 180);
+const size = Math.min(window.innerWidth - 42, window.innerHeight - 180);
 const fluidSim = createFluidSim({
   initialScene: 'Latte Scene',
   canvasDomId: 'myCanvas',

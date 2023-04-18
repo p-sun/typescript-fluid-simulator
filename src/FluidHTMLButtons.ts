@@ -81,10 +81,10 @@ export function inputsForScene(options: {
   const latteButton = document.getElementById(lattePenButtonId)!;
   latteButton.style.display = scene.tag === 'Latte Scene' ? 'inline' : 'none';
   if (scene.tag === 'Latte Scene') {
-    latteButton.textContent = scene.lattePen ? 'Pen' : 'Milk';
+    latteButton.textContent = scene.lattePen ? 'Milk' : 'Pen';
     latteButton.onclick = () => {
       scene.lattePen = !scene.lattePen;
-      latteButton.textContent = scene.lattePen ? 'Pen' : 'Milk';
+      latteButton.textContent = scene.lattePen ? 'Milk' : 'Pen';
     };
   }
 

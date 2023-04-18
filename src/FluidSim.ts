@@ -1,5 +1,5 @@
 import { draw } from './FluidDraw';
-import { inputsForScene } from './FluidHTMLButtons';
+import { addLattePenButton, inputsForScene } from './FluidHTMLButtons';
 import {
   makeScene,
   Scene,
@@ -123,6 +123,7 @@ export function createFluidSim(options: {
 
   options.autostart ? fluidSim.update() : fluidSim.step();
 
+  addLattePenButton();
   appendInputs(
     document.getElementById(options.buttonsDomId)!,
     canvasSize,

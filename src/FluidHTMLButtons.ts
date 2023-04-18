@@ -1,6 +1,23 @@
 import { Scene, SceneConfig, SceneTag } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
+const lattePenButtonId = 'lattePenButton';
+
+export function addLattePenButton() {
+  const button = document.createElement('button');
+  button.id = lattePenButtonId;
+  button.style.position = 'absolute';
+  button.style.width = '40px';
+  button.style.height = '40px';
+  button.style.zIndex = '1';
+  button.style.left = '10px';
+  button.style.bottom = '10px';
+  button.style.backgroundColor = 'white';
+
+  const container = document.getElementById('canvasContainer')!;
+  container.appendChild(button);
+}
+
 export function inputsForScene(options: {
   scene: Scene;
   onPauseToggled: () => void;
@@ -61,12 +78,14 @@ export function inputsForScene(options: {
     }),
   ];
 
+  const latteButton = document.getElementById(lattePenButtonId)!;
+  latteButton.style.display = scene.tag === 'Latte Scene' ? 'inline' : 'none';
   if (scene.tag === 'Latte Scene') {
-    inputs.push(
-      createCheckbox('Latte pen', scene.lattePen, () => {
-        scene.lattePen = !scene.lattePen;
-      })
-    );
+    latteButton.textContent = scene.lattePen ? 'Pen' : 'Milk';
+    latteButton.onclick = () => {
+      scene.lattePen = !scene.lattePen;
+      latteButton.textContent = scene.lattePen ? 'Pen' : 'Milk';
+    };
   }
 
   inputs.push(createBreak());

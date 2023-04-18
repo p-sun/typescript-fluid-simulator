@@ -188,7 +188,7 @@ export function setObstacle(
     const framesTo0Speed = scene.timeToZeroMilkSpeed / scene.dt;
     const framesToMinRadius = scene.timeToMinObstacleRadius / scene.dt;
 
-    if (isLeft) {
+    if (latteMilk) {
       latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
       if (scene.frameNr <= framesToMinRadius) {
         // Over some secs after mouse press, the radius shrinks from r to minRadius

@@ -49,8 +49,6 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
 
   let color = [255, 255, 255, 255];
   const yellow = [255, 255, 0];
-  const espresso = [193, 122, 61];
-  const cupSquared = (scene.latteCupRadius * scene.latteCupRadius) / f.h / f.h;
 
   for (let i = 0; i < f.numX; i++) {
     for (let j = 0; j < f.numY; j++) {
@@ -68,19 +66,6 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
         const s = f.m[i * n + j];
         if (scene.tag === 'Paint Scene') {
           color = getSciColor(s, 0.0, 1.0);
-        } else if (scene.tag === 'Latte Scene') {
-          const lx = i + 0.5 - f.numX / 2;
-          const ly = j + 0.5 - f.numY / 2;
-          const isOutsideCup = lx * lx + ly * ly > cupSquared;
-          if (isOutsideCup) {
-            color[0] = 8;
-            color[1] = 170;
-            color[2] = 178;
-          } else {
-            const contrast = 2.8;
-            const lightness = (s - 0.5) * contrast + 0.5;
-            color = blendWhite(espresso, Math.max(0.0, lightness));
-          }
         } else {
           color[0] = 255 * s;
           color[1] = 255 * s;
@@ -189,22 +174,6 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
     c.strokeStyle = '#000000';
     c.beginPath();
     c.arc(cX(scene.obstacleX), cY(scene.obstacleY), cL(r), 0.0, 2.0 * Math.PI);
-    c.closePath();
-    c.stroke();
-    c.lineWidth = 1.0;
-  }
-
-  if (scene.tag === 'Latte Scene') {
-    c.lineWidth = cL(0.03);
-    c.strokeStyle = '#ffffff';
-    c.beginPath();
-    c.arc(
-      cX((f.numX * h) / 2),
-      cY((f.numY * h) / 2),
-      cL(scene.latteCupRadius * 1.01),
-      0.0,
-      2.0 * Math.PI
-    );
     c.closePath();
     c.stroke();
     c.lineWidth = 1.0;

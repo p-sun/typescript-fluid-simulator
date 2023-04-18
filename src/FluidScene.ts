@@ -39,8 +39,8 @@ const defaultSceneConfig = {
   lattePen: false,
   latteCupRadius: 0.4,
   milkStartSpeed: 0.8,
-  timeToZeroMilkSpeed: 7.0,
-  timeToMinObstacleRadius: 8.0,
+  timeToZeroMilkSpeed: 6.0,
+  timeToMinObstacleRadius: 7.0,
 };
 
 export type SceneConfig = typeof defaultSceneConfig;

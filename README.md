@@ -10,7 +10,7 @@ Left drag to pour "milk", right drag or check the "Latte Pen" checkbox to use th
 
 Latte Art with Code: https://stackblitz.com/edit/typescript-lzex4b?file=index.ts
 
-https://user-images.githubusercontent.com/9044578/232227525-6e5a271d-b20c-43c2-8feb-724efb03556c.mov
+https://user-images.githubusercontent.com/9044578/232896892-6d0831e9-1a2a-4fe0-b3fd-f35b61ec2752.mov
 
 https://user-images.githubusercontent.com/9044578/232339842-c2dac2ad-2100-486f-ace9-cf461f80a239.mov
 

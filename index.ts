@@ -7,7 +7,7 @@ const fluidSim = createFluidSim({
   initialScene: 'Latte Scene',
   canvasDomId: 'myCanvas',
   buttonsDomId: 'inputDiv',
-  canvasSize: new Vec2(window.innerWidth - 80, window.innerHeight - 270),
+  canvasSize: new Vec2(window.innerWidth - 42, window.innerHeight - 180),
   resolutionOverride: undefined,
   autostart: true,
 });

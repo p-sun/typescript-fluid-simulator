@@ -3,21 +3,6 @@ import { createSliderWithText } from './Utils/HTMLSlider';
 
 const lattePenButtonId = 'lattePenButton';
 
-export function addLattePenButton() {
-  const button = document.createElement('button');
-  button.id = lattePenButtonId;
-  button.style.position = 'absolute';
-  button.style.width = '40px';
-  button.style.height = '40px';
-  button.style.zIndex = '1';
-  button.style.left = '10px';
-  button.style.bottom = '10px';
-  button.style.backgroundColor = 'white';
-
-  const container = document.getElementById('canvasContainer')!;
-  container.appendChild(button);
-}
-
 export function inputsForScene(options: {
   scene: Scene;
   onPauseToggled: () => void;
@@ -39,6 +24,12 @@ export function inputsForScene(options: {
       setText(!scene.paused ? 'Start' : 'Pause');
       onPauseToggled();
     }),
+    createButton('Clear', () => {
+      onChangeScene(scene.tag, false);
+    }),
+    createButton('Latte scene', () => {
+      onChangeScene('Latte Scene', true);
+    }),
     createButton('Wind scene', () => {
       onChangeScene('Wind Scene', true);
     }),
@@ -51,13 +42,19 @@ export function inputsForScene(options: {
     createButton('HiRes scene', () => {
       onChangeScene('HiRes Scene', true);
     }),
-    createButton('Latte scene', () => {
-      onChangeScene('Latte Scene', true);
-    }),
-    createButton('Clear', () => {
-      onChangeScene(scene.tag, false);
-    }),
-    createBreak(),
+  ];
+
+  inputs.push(createBreak());
+
+  if (scene.tag === 'Latte Scene') {
+    inputs.push(
+      createCheckbox('Latte pen tool', scene.lattePen, () => {
+        scene.lattePen = !scene.lattePen;
+      })
+    );
+  }
+
+  inputs.push(
     createCheckbox('Streamlines', scene.showStreamlines, () => {
       scene.showStreamlines = !scene.showStreamlines;
     }),
@@ -75,18 +72,8 @@ export function inputsForScene(options: {
     }),
     createCheckbox('Solid', scene.showSolid, () => {
       scene.showSolid = !scene.showSolid;
-    }),
-  ];
-
-  const latteButton = document.getElementById(lattePenButtonId)!;
-  latteButton.style.display = scene.tag === 'Latte Scene' ? 'inline' : 'none';
-  if (scene.tag === 'Latte Scene') {
-    latteButton.textContent = scene.lattePen ? 'Milk' : 'Pen';
-    latteButton.onclick = () => {
-      scene.lattePen = !scene.lattePen;
-      latteButton.textContent = scene.lattePen ? 'Milk' : 'Pen';
-    };
-  }
+    })
+  );
 
   inputs.push(createBreak());
 
@@ -128,7 +115,7 @@ export function inputsForScene(options: {
   }
 
   if (scene.tag === 'Latte Scene') {
-    inputs = inputs.concat([
+    inputs.push(
       createSliderWithText(
         {
           initialValue: scene.milkStartSpeed,
@@ -156,11 +143,11 @@ export function inputsForScene(options: {
           scene.timeToZeroMilkSpeed = val;
           onChangeOverrides({ timeToZeroMilkSpeed: val });
         }
-      ),
-    ]);
+      )
+    );
   }
 
-  inputs = inputs.concat([
+  inputs.push(
     createSliderWithText(
       {
         initialValue: scene.overRelaxation,
@@ -203,8 +190,8 @@ export function inputsForScene(options: {
       }
     ),
     `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
-    `\nLeft drag to pour "milk", right drag or check the "Latte Pen" checkbox to use the latte pen tool.`,
-  ]);
+    `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
+  );
 
   return inputs;
 }

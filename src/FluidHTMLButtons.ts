@@ -100,7 +100,7 @@ export function inputsForScene(options: {
       createSliderWithText(
         {
           initialValue: scene.timeToMinObstacleRadius,
-          min: 0.1,
+          min: 0,
           max: 25,
           stepSize: 0.1,
           label: 'Time to min radius',
@@ -133,7 +133,7 @@ export function inputsForScene(options: {
       createSliderWithText(
         {
           initialValue: scene.timeToZeroMilkSpeed,
-          min: 0.1,
+          min: 0,
           max: 18,
           stepSize: 0.1,
           label: 'Time to 0 milk speed',

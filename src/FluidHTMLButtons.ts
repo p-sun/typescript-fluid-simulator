@@ -1,50 +1,31 @@
 import { Scene, SceneConfig, SceneTag } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
-const lattePenButtonId = 'lattePenButton';
-
 export function inputsForScene(options: {
   scene: Scene;
-  onPauseToggled: () => void;
   onObstacleChanged: () => void;
+  onKeyPress: (key: string) => void;
   onChangeOverrides: (newOverrides: Partial<SceneConfig>) => void;
-  onChangeScene: (tag: SceneTag, clearOverrides: boolean) => void;
+  onChangeScene: (tag: SceneTag) => void;
 }): (string | HTMLElement)[] {
   const {
     scene,
-    onPauseToggled,
     onObstacleChanged,
+    onKeyPress,
     onChangeScene,
     onChangeOverrides,
   } = options;
 
   let inputs: (string | HTMLElement)[] = [
     createBreak(),
-    createButton(scene.paused ? 'Start' : 'Pause', (setText) => {
-      setText(!scene.paused ? 'Start' : 'Pause');
-      onPauseToggled();
+    createButton(scene.paused ? 'Start (P)' : 'Pause (P)', (setText) => {
+      setText(!scene.paused ? 'Start (P)' : 'Pause (P)');
+      onKeyPress('p');
     }),
-    createButton('Clear', () => {
-      onChangeScene(scene.tag, false);
-    }),
-    createButton('Latte scene', () => {
-      onChangeScene('Latte Scene', true);
-    }),
-    createButton('Wind scene', () => {
-      onChangeScene('Wind Scene', true);
-    }),
-    createButton('Paint scene', () => {
-      onChangeScene('Paint Scene', true);
-    }),
-    createButton('Tank scene', () => {
-      onChangeScene('Tank Scene', true);
-    }),
-    createButton('HiRes scene', () => {
-      onChangeScene('HiRes Scene', true);
+    createButton('Clear (C)', () => {
+      onKeyPress('c');
     }),
   ];
-
-  inputs.push(createBreak());
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
@@ -53,27 +34,6 @@ export function inputsForScene(options: {
       })
     );
   }
-
-  inputs.push(
-    createCheckbox('Streamlines', scene.showStreamlines, () => {
-      scene.showStreamlines = !scene.showStreamlines;
-    }),
-    createCheckbox('Velocity', scene.showVelocities, () => {
-      scene.showVelocities = !scene.showVelocities;
-    }),
-    createCheckbox('Pressure', scene.showPressure, () => {
-      scene.showPressure = !scene.showPressure;
-    }),
-    createCheckbox('Smoke', scene.showSmoke, () => {
-      scene.showSmoke = !scene.showSmoke;
-    }),
-    createCheckbox('Obstacle', scene.showObstacle, () => {
-      scene.showObstacle = !scene.showObstacle;
-    }),
-    createCheckbox('Solid', scene.showSolid, () => {
-      scene.showSolid = !scene.showSolid;
-    })
-  );
 
   inputs.push(createBreak());
 
@@ -186,14 +146,68 @@ export function inputsForScene(options: {
       },
       (resolution) => {
         onChangeOverrides({ resolution });
-        onChangeScene(scene.tag, false);
+        onKeyPress('c');
       }
-    ),
-    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
+    )
+  );
+
+  inputs.push(
+    createBreak(),
+    createDivider(),
+    createBreak(),
+    createCheckbox('Streamlines', scene.showStreamlines, () => {
+      scene.showStreamlines = !scene.showStreamlines;
+    }),
+    createCheckbox('Velocity', scene.showVelocities, () => {
+      scene.showVelocities = !scene.showVelocities;
+    }),
+    createCheckbox('Pressure', scene.showPressure, () => {
+      scene.showPressure = !scene.showPressure;
+    }),
+    createCheckbox('Smoke', scene.showSmoke, () => {
+      scene.showSmoke = !scene.showSmoke;
+    }),
+    createCheckbox('Obstacle', scene.showObstacle, () => {
+      scene.showObstacle = !scene.showObstacle;
+    }),
+    createCheckbox('Solid', scene.showSolid, () => {
+      scene.showSolid = !scene.showSolid;
+    })
+  );
+
+  inputs.push(
+    createBreak(),
+    createButton('Latte scene', () => {
+      onChangeScene('Latte Scene');
+    }),
+    createButton('Wind scene', () => {
+      onChangeScene('Wind Scene');
+    }),
+    createButton('Paint scene', () => {
+      onChangeScene('Paint Scene');
+    }),
+    createButton('Tank scene', () => {
+      onChangeScene('Tank Scene');
+    }),
+    createButton('HiRes scene', () => {
+      onChangeScene('HiRes Scene');
+    })
+  );
+
+  inputs.push(
+    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame.`,
     `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
   );
 
   return inputs;
+}
+
+function createDivider() {
+  const br = document.createElement('div');
+  br.style.flexBasis = '100%';
+  br.style.height = '2pt';
+  br.style.backgroundColor = 'lightGray';
+  return br;
 }
 
 function createBreak() {

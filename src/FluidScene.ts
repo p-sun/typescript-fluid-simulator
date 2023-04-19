@@ -182,8 +182,8 @@ export function setObstacle(
         r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
       }
     } else {
-      r = 0.005;
-      latteV = 0.0;
+      r = 0.006;
+      latteV = 0;
     }
   }
 
@@ -217,8 +217,8 @@ export function setObstacle(
               f.u[i * n + j] = vx * (dx / r) * latteV * (dx > 0 ? 1 : -1);
               f.v[i * n + j] = dy < 0 ? (dy / r) * latteV : 0;
             } else if (!latteMilk && insideObstacle) {
-              f.u[i * n + j] = vx;
-              f.v[i * n + j] = vy;
+              f.u[i * n + j] = vx / 2;
+              f.v[i * n + j] = vy / 2;
             }
           }
         }

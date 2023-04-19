@@ -86,15 +86,6 @@ function makeSceneConfig(tag: SceneTag): SceneConfig {
   }
 }
 
-function makeFluidPhysics(numY: number, canvasSize: Vec2, drag: number) {
-  const domainHeight = 1.0;
-  const domainWidth = (domainHeight * canvasSize.x) / canvasSize.y;
-  const h = domainHeight / numY;
-  const numX = Math.floor(domainWidth / h);
-  const density = 1000.0;
-  return new FluidPhysics(density, drag, numX, numY, h);
-}
-
 export function makeScene(
   tag: SceneTag,
   canvasSize: Vec2,
@@ -108,11 +99,7 @@ export function makeScene(
     tag: tag,
     ...sceneConfig,
     paused: false,
-    fluid: makeFluidPhysics(
-      sceneConfig.resolution,
-      canvasSize,
-      sceneConfig.drag
-    ),
+    fluid: FluidPhysics.makeFluidPhysics(sceneConfig, canvasSize),
   };
 
   const f = scene.fluid;

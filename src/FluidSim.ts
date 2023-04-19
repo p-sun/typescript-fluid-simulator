@@ -13,24 +13,60 @@ import Vec2 from './Utils/Vec2';
 export class FluidSim implements CanvasListener {
   private scene: Scene;
   private mouseDown = false;
-  private readonly context: CanvasRenderingContext2D;
+  private overrides: Partial<SceneConfig> = {};
   private readonly cSize: Vec2;
+  private readonly inputDiv: HTMLElement;
+  private readonly context: CanvasRenderingContext2D;
 
-  constructor(scene: Scene, cSize: Vec2, context: CanvasRenderingContext2D) {
-    this.scene = scene;
-    this.context = context;
+  constructor(
+    sceneTag: SceneTag,
+    cSize: Vec2,
+    overrides: Partial<SceneConfig>,
+    inputDiv: HTMLElement,
+    context: CanvasRenderingContext2D
+  ) {
+    this.overrides = overrides;
     this.cSize = cSize;
+    this.inputDiv = inputDiv;
+    this.context = context;
+    this.scene = this.setScene(sceneTag);
   }
 
-  setScene(scene: Scene) {
-    this.scene = scene;
+  setScene(sceneTag: SceneTag): Scene {
+    this.scene = makeScene(sceneTag, this.cSize, this.overrides);
+    this.setDiv(this.scene);
+    return this.scene;
   }
 
-  keyDown(key: 'm' | 'p') {
+  setDiv(scene: Scene) {
+    this.inputDiv.innerHTML = '';
+    this.inputDiv.append(
+      ...inputsForScene({
+        scene,
+        onObstacleChanged: () => {
+          this.updateObstacle();
+        },
+        onKeyPress: (key: string) => {
+          this.keyDown(key);
+        },
+        onChangeOverrides: (newOverrides: Partial<SceneConfig>) => {
+          this.overrides = { ...this.overrides, ...(newOverrides ?? {}) };
+        },
+        onChangeScene: (tag: SceneTag) => {
+          this.overrides = {};
+          this.setScene(tag);
+        },
+      })
+    );
+  }
+
+  keyDown(key: string) {
     if (key === 'm') {
       this.step();
     } else if (key === 'p') {
       this.pausePressed();
+    } else if (key === 'c') {
+      this.setScene(this.scene.tag);
     }
   }
 
@@ -98,74 +134,26 @@ export class FluidSim implements CanvasListener {
   }
 }
 
-// Cache slider overrides, so that we can keep it when switching scenes.
-let overrides: Partial<SceneConfig> = {};
-
 export function createFluidSim(options: {
-  initialScene: SceneTag;
+  initialSceneTag: SceneTag;
   canvasDomId: string;
-  buttonsDomId: string;
+  inputDomId: string;
   canvasSize: Vec2;
   autostart: boolean;
-  resolutionOverride?: number;
+  overrides: Partial<SceneConfig>;
 }) {
-  overrides.resolution = options.resolutionOverride;
-
-  const { canvasSize } = options;
-  const initialScene = makeScene(options.initialScene, canvasSize, overrides);
-
   const fluidCanvas = new Canvas(
     document.getElementById(options.canvasDomId) as HTMLCanvasElement,
-    canvasSize
+    options.canvasSize
   );
-  const fluidSim = new FluidSim(initialScene, canvasSize, fluidCanvas.context);
+  const fluidSim = new FluidSim(
+    options.initialSceneTag,
+    options.canvasSize,
+    options.overrides,
+    document.getElementById(options.inputDomId) as HTMLCanvasElement,
+    fluidCanvas.context
+  );
   fluidCanvas.setListener(fluidSim);
 
   options.autostart ? fluidSim.update() : fluidSim.step();
-
-  appendInputs(
-    document.getElementById(options.buttonsDomId)!,
-    canvasSize,
-    initialScene,
-    fluidSim
-  );
-}
-
-function appendInputs(
-  inputDiv: HTMLElement,
-  canvasSize: Vec2,
-  initialScene: Scene,
-  fluidSim: FluidSim
-) {
-  const setDiv = (scene: Scene) => {
-    inputDiv.innerHTML = '';
-    inputDiv.append(
-      ...inputsForScene({
-        scene,
-        onPauseToggled: () => {
-          fluidSim.pausePressed();
-        },
-        onObstacleChanged: () => {
-          fluidSim.updateObstacle();
-        },
-        onChangeScene,
-        onChangeOverrides,
-      })
-    );
-  };
-
-  const onChangeScene = (tag: SceneTag, clearOverrides: boolean) => {
-    if (clearOverrides) {
-      overrides = {};
-    }
-    const scene = makeScene(tag, canvasSize, overrides);
-    setDiv(scene);
-    fluidSim.setScene(scene);
-  };
-
-  const onChangeOverrides = (newOverrides: Partial<SceneConfig>) => {
-    overrides = { ...overrides, ...(newOverrides ?? {}) };
-  };
-
-  setDiv(initialScene);
 }

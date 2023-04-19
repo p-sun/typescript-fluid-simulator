@@ -1,4 +1,5 @@
-import { Scene } from './FluidScene';
+import { Scene, SceneConfig } from './FluidScene';
+import Vec2 from './Utils/Vec2';
 
 type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
 
@@ -22,7 +23,17 @@ export class FluidPhysics {
   m: Float32Array; // Smoke density. 0 = black, 1 = white
   newM: Float32Array; // Buffer for smoke density
 
-  constructor(
+  static makeFluidPhysics(sceneConfig: SceneConfig, canvasSize: Vec2) {
+    const { resolution: numY, drag } = sceneConfig;
+    const domainHeight = 1.0;
+    const domainWidth = (domainHeight * canvasSize.x) / canvasSize.y;
+    const h = domainHeight / numY;
+    const numX = Math.floor(domainWidth / h);
+    const density = 1000.0;
+    return new FluidPhysics(density, drag, numX, numY, h);
+  }
+
+  private constructor(
     density: number,
     drag: number,
     numX: number,
@@ -46,7 +57,18 @@ export class FluidPhysics {
     this.m.fill(1.0);
   }
 
-  integrate(dt: number, gravity: number) {
+  simulate(s: Scene, dt: number) {
+    this.integrate(dt, s.gravity);
+
+    this.p.fill(0.0);
+    this.solveIncompressibility(s.overRelaxation, s.numIters, dt);
+
+    this.extrapolate();
+    this.advectVel(dt);
+    this.advectSmoke(dt, s.smokeDissipation);
+  }
+
+  private integrate(dt: number, gravity: number) {
     const n = this.numY;
     for (let i = 1; i < this.numX; i++) {
       for (let j = 1; j < this.numY - 1; j++) {
@@ -56,7 +78,7 @@ export class FluidPhysics {
     }
   }
 
-  extrapolate() {
+  private extrapolate() {
     let n = this.numY;
     for (let i = 0; i < this.numX; i++) {
       // 0th col = 1st col
@@ -72,7 +94,11 @@ export class FluidPhysics {
     }
   }
 
-  solveIncompressibility(overRelaxation: number, numIters: number, dt: number) {
+  private solveIncompressibility(
+    overRelaxation: number,
+    numIters: number,
+    dt: number
+  ) {
     const n = this.numY;
     const cp = (this.density * this.h) / dt;
 
@@ -168,7 +194,7 @@ export class FluidPhysics {
   }
 
   // Average horizontal velocity at index (i, j)
-  avgU(i: number, j: number) {
+  private avgU(i: number, j: number) {
     const n = this.numY;
     const u =
       (this.u[i * n + j - 1] +
@@ -180,7 +206,7 @@ export class FluidPhysics {
   }
 
   // Average vertical velocity at index (i, j)
-  avgV(i: number, j: number) {
+  private avgV(i: number, j: number) {
     const n = this.numY;
     const v =
       (this.v[(i - 1) * n + j] +
@@ -193,7 +219,7 @@ export class FluidPhysics {
 
   // Set velocity to be the predicted velocity of a particle dt time
   // in the past, calculated by averaging neighbouring velocities.
-  advectVel(dt: number) {
+  private advectVel(dt: number) {
     this.newU.set(this.u);
     this.newV.set(this.v);
 
@@ -250,7 +276,7 @@ export class FluidPhysics {
 
   // Similar to advectVel, but for smoke density.
   // New density is a weighted average of neighbouring smoke densities.
-  advectSmoke(dt: number, smokeDissipation: number) {
+  private advectSmoke(dt: number, smokeDissipation: number) {
     this.newM.set(this.m);
 
     const n = this.numY;
@@ -270,16 +296,5 @@ export class FluidPhysics {
       }
     }
     this.m.set(this.newM);
-  }
-
-  simulate(s: Scene, dt: number) {
-    this.integrate(dt, s.gravity);
-
-    this.p.fill(0.0);
-    this.solveIncompressibility(s.overRelaxation, s.numIters, dt);
-
-    this.extrapolate();
-    this.advectVel(dt);
-    this.advectSmoke(dt, s.smokeDissipation);
   }
 }

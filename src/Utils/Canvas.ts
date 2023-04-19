@@ -4,7 +4,7 @@ export interface CanvasListener {
   startDrag: (x: number, y: number, isLeft: boolean) => void;
   endDrag: () => void;
   drag: (x: number, y: number, isLeft: boolean) => void;
-  keyDown: (key: 'm' | 'p') => void;
+  keyDown: (key: string) => void;
 }
 
 export class Canvas {
@@ -70,14 +70,7 @@ export class Canvas {
     };
 
     document.addEventListener('keydown', (event) => {
-      switch (event.key) {
-        case 'p':
-          this.#listener?.keyDown('p');
-          break;
-        case 'm':
-          this.#listener?.keyDown('m');
-          break;
-      }
+      this.#listener?.keyDown(event.key);
     });
 
     document.addEventListener('contextmenu', (e) => {

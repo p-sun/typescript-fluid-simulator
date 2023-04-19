@@ -4,10 +4,10 @@ import { createFluidSim } from './src/FluidSim';
 import Vec2 from './src/Utils/Vec2';
 
 const fluidSim = createFluidSim({
-  initialScene: 'Latte Scene',
+  initialSceneTag: 'Latte Scene',
   canvasDomId: 'myCanvas',
-  buttonsDomId: 'inputDiv',
+  inputDomId: 'inputDiv',
   canvasSize: new Vec2(window.innerWidth - 80, window.innerHeight - 270),
-  resolutionOverride: undefined,
   autostart: true,
+  overrides: {},
 });

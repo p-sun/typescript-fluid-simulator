@@ -31,12 +31,12 @@ export function inputsForScene(options: {
         scene.tool = 'Milk';
         updateInputs();
       }),
-      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
-        scene.tool = 'Latte Pen';
-        updateInputs();
-      }),
       createRadioInput('Chocolate', scene.tool === 'Chocolate', () => {
         scene.tool = 'Chocolate';
+        updateInputs();
+      }),
+      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
+        scene.tool = 'Latte Pen';
         updateInputs();
       })
     );

@@ -1,6 +1,7 @@
 <div style="display:flex">
   <img src="https://user-images.githubusercontent.com/9044578/232227994-b83b7042-dd37-459b-9805-a759c0fa3d75.png" height="300">
   <img src="https://user-images.githubusercontent.com/9044578/232897252-d6fe52eb-9247-4cc4-8ad3-288ae7e7f455.png" height="300">
+  <img src="https://user-images.githubusercontent.com/9044578/233224536-525696a3-9bfa-4594-a378-efcd0a9913d6.png" height="300">
 </div>
 
 # Latte Art Fluid Simulator
@@ -13,7 +14,7 @@ Left drag to pour "milk", right drag or check the "Latte Pen" checkbox to use th
 
 Latte Art with Code: https://stackblitz.com/edit/typescript-lzex4b?file=index.ts
 
-https://user-images.githubusercontent.com/9044578/232896892-6d0831e9-1a2a-4fe0-b3fd-f35b61ec2752.mov
+https://user-images.githubusercontent.com/9044578/233222681-d18ca804-81dc-4763-8e37-5510383f18d5.mov
 
 https://user-images.githubusercontent.com/9044578/232339842-c2dac2ad-2100-486f-ace9-cf461f80a239.mov
 

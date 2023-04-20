@@ -20,10 +20,6 @@ export function inputsForScene(options: {
 
   let inputs: (string | HTMLElement)[] = [
     createBreak(),
-    createButton(scene.paused ? 'Start (P)' : 'Pause (P)', (setText) => {
-      setText(!scene.paused ? 'Start (P)' : 'Pause (P)');
-      onKeyPress('p');
-    }),
     createButton('Clear (C)', () => {
       onKeyPress('c');
     }),
@@ -188,6 +184,10 @@ export function inputsForScene(options: {
 
   inputs.push(
     createBreak(),
+    createButton(scene.paused ? 'Start (P)' : 'Pause (P)', (setText) => {
+      setText(!scene.paused ? 'Start (P)' : 'Pause (P)');
+      onKeyPress('p');
+    }),
     createButton('Latte scene', () => {
       onChangeScene('Latte Scene');
     }),

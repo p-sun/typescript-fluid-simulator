@@ -183,7 +183,10 @@ export function setObstacle(
         // Over some secs after mouse press, the radius shrinks from r to minRadius
         r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
       }
-    } else {
+    } else if (tool === 'Chocolate') {
+      r = 0.02;
+      latteV = 0;
+    } else if (tool === 'Latte Pen') {
       r = 0.006;
       latteV = 0;
     }
@@ -206,6 +209,9 @@ export function setObstacle(
             f.s[i * n + j] = 0.0; // Solid cell
             if (tool === 'Milk') {
               f.m[i * n + j] = 1; // White smoke
+              f.c[i * n + j] = 0;
+            } else if (tool === 'Chocolate') {
+              f.c[i * n + j] = 1;
             }
           } else {
             f.s[i * n + j] = 1; // Fluid
@@ -262,7 +268,7 @@ function remap(
   return clamp(val, start2, stop2);
 }
 
-function clamp(n: number, min: number, max: number) {
+export function clamp(n: number, min: number, max: number) {
   if (min > max) {
     const tmp = min;
     min = max;

@@ -1,4 +1,4 @@
-import { Scene } from './FluidScene';
+import { clamp, Scene } from './FluidScene';
 import Vec2 from './Utils/Vec2';
 
 function sizeTransformations(cSize: Vec2) {
@@ -50,6 +50,8 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
   let color = [255, 255, 255, 255];
   const yellow = [255, 255, 0];
   const espresso = [193, 122, 61];
+  const chocolate = [40, 20, 20];
+
   const cupSquared = (scene.latteCupRadius * scene.latteCupRadius) / f.h / f.h;
 
   for (let i = 0; i < f.numX; i++) {
@@ -80,6 +82,11 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
             const contrast = 2.8;
             const lightness = (s - 0.5) * contrast + 0.5;
             color = blendWhite(espresso, Math.max(0.0, lightness));
+
+            const c = f.c[i * n + j];
+            if (c > 0.0) {
+              color = blendColors(chocolate, color, clamp(c * contrast, 0, 1));
+            }
           }
         } else {
           color[0] = 255 * s;

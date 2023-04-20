@@ -1,7 +1,7 @@
 import { Scene, SceneConfig } from './FluidScene';
 import Vec2 from './Utils/Vec2';
 
-type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD';
+type Field = 'U_FIELD' | 'V_FIELD' | 'S_FIELD' | 'C_FIELD';
 
 export class FluidPhysics {
   density: number;
@@ -22,6 +22,8 @@ export class FluidPhysics {
   s: Float32Array; // Solidness. 0 = solid, 1 = fluid
   m: Float32Array; // Smoke density. 0 = black, 1 = white
   newM: Float32Array; // Buffer for smoke density
+  c: Float32Array; // Smoke density for chocolate. 0 = transparent, 1 = brown
+  newC: Float32Array; // Buffer for smoke density
 
   static makeFluidPhysics(sceneConfig: SceneConfig, canvasSize: Vec2) {
     const { resolution: numY, drag } = sceneConfig;
@@ -54,6 +56,9 @@ export class FluidPhysics {
     this.s = new Float32Array(this.numCells);
     this.m = new Float32Array(this.numCells);
     this.newM = new Float32Array(this.numCells);
+    this.c = new Float32Array(this.numCells);
+    this.newC = new Float32Array(this.numCells);
+    this.c.fill(0);
     this.m.fill(1.0);
   }
 
@@ -65,7 +70,7 @@ export class FluidPhysics {
 
     this.extrapolate();
     this.advectVel(dt);
-    this.advectSmoke(dt, s.smokeDissipation);
+    this.advectSmoke(dt, s.smokeDissipation, s.tag === 'Latte Scene');
   }
 
   private integrate(dt: number, gravity: number) {
@@ -171,6 +176,10 @@ export class FluidPhysics {
         dx = h2;
         dy = h2;
         break;
+      case 'C_FIELD':
+        f = this.c;
+        dx = h2;
+        dy = h2;
     }
 
     const x0 = Math.min(Math.floor((x - dx) * h1), this.numX - 1);
@@ -276,8 +285,13 @@ export class FluidPhysics {
 
   // Similar to advectVel, but for smoke density.
   // New density is a weighted average of neighbouring smoke densities.
-  private advectSmoke(dt: number, smokeDissipation: number) {
+  private advectSmoke(
+    dt: number,
+    smokeDissipation: number,
+    advectChocolate: boolean
+  ) {
     this.newM.set(this.m);
+    if (advectChocolate) this.newC.set(this.c);
 
     const n = this.numY;
     const h = this.h;
@@ -292,9 +306,12 @@ export class FluidPhysics {
           const y = j * h + h2 - dt * v;
           this.newM[i * n + j] =
             this.sampleField(x, y, 'S_FIELD') * smokeDissipation;
+          this.newC[i * n + j] =
+            this.sampleField(x, y, 'C_FIELD') * smokeDissipation;
         }
       }
     }
     this.m.set(this.newM);
+    if (advectChocolate) this.c.set(this.newC);
   }
 }

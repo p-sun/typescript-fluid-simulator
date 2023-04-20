@@ -64,7 +64,7 @@ export class FluidSim implements CanvasListener {
   }
 
   keyDown(key: string) {
-    if (key === 'm') {
+    if (key === 'n') {
       this.step();
     } else if (key === 'p') {
       this.pausePressed();

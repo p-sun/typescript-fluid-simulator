@@ -188,6 +188,9 @@ export function inputsForScene(options: {
       setText(!scene.paused ? 'Start (P)' : 'Pause (P)');
       onKeyPress('p');
     }),
+    createButton('Next Frame (N)', (setText) => {
+      onKeyPress('n');
+    }),
     createButton('Latte scene', () => {
       onChangeScene('Latte Scene');
     }),
@@ -205,10 +208,11 @@ export function inputsForScene(options: {
     })
   );
 
-  inputs.push(
-    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame.`,
-    `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
-  );
+  if (scene.tag === 'Latte Scene') {
+    inputs.push(
+      `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
+    );
+  }
 
   return inputs;
 }

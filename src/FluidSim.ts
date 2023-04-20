@@ -56,6 +56,9 @@ export class FluidSim implements CanvasListener {
           this.overrides = {};
           this.setScene(tag);
         },
+        updateInputs: () => {
+          this.setDiv(this.scene);
+        },
       })
     );
   }

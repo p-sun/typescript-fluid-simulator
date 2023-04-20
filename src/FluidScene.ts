@@ -8,6 +8,8 @@ export type SceneTag =
   | 'HiRes Scene'
   | 'Latte Scene';
 
+export type LatteTool = 'Milk' | 'Latte Pen' | 'Chocolate';
+
 export type Scene = {
   tag: SceneTag;
   paused: boolean;
@@ -36,7 +38,7 @@ const defaultSceneConfig = {
   showSolid: false,
 
   // Latte Art Specific
-  lattePen: false,
+  tool: 'Milk' as LatteTool,
   latteCupRadius: 0.4,
   milkStartSpeed: 0.8,
   timeToZeroMilkSpeed: 6.0,
@@ -168,14 +170,14 @@ export function setObstacle(
 
   const latteCupOuter = scene.latteCupRadius;
   const latteCupInner = latteCupOuter - 0.01;
-  const latteMilk = isLeft && !scene.lattePen;
+  const tool: LatteTool = !isLeft ? 'Latte Pen' : scene.tool;
   const minRadius = 0.015;
   let latteV = 0.0; // Latte velocity
   if (scene.tag === 'Latte Scene') {
     const framesTo0Speed = scene.timeToZeroMilkSpeed / scene.dt;
     const framesToMinRadius = scene.timeToMinObstacleRadius / scene.dt;
 
-    if (latteMilk) {
+    if (tool === 'Milk') {
       latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
       if (scene.frameNr <= framesToMinRadius) {
         // Over some secs after mouse press, the radius shrinks from r to minRadius
@@ -202,7 +204,7 @@ export function setObstacle(
         } else {
           if (insideObstacle) {
             f.s[i * n + j] = 0.0; // Solid cell
-            if (latteMilk) {
+            if (tool === 'Milk') {
               f.m[i * n + j] = 1; // White smoke
             }
           } else {
@@ -212,11 +214,11 @@ export function setObstacle(
           const isInsideInnerCup = dFromCenter < latteCupInner * latteCupInner;
           const aroundObstacle = dx * dx + dy * dy < (r + 0.03) * (r + 0.03);
           if (isInsideInnerCup) {
-            if (latteMilk && aroundObstacle) {
+            if (tool === 'Milk' && aroundObstacle) {
               // Horizontal velocity is dampened mouse velocity. Faster on the edges.
               f.u[i * n + j] = vx * (dx / r) * latteV * (dx > 0 ? 1 : -1);
               f.v[i * n + j] = dy < 0 ? (dy / r) * latteV : 0;
-            } else if (!latteMilk && insideObstacle) {
+            } else if (tool === 'Latte Pen' && insideObstacle) {
               f.u[i * n + j] = vx / 2;
               f.v[i * n + j] = vy / 2;
             }

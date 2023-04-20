@@ -7,6 +7,7 @@ export function inputsForScene(options: {
   onKeyPress: (key: string) => void;
   onChangeOverrides: (newOverrides: Partial<SceneConfig>) => void;
   onChangeScene: (tag: SceneTag) => void;
+  updateInputs: () => void;
 }): (string | HTMLElement)[] {
   const {
     scene,
@@ -14,6 +15,7 @@ export function inputsForScene(options: {
     onKeyPress,
     onChangeScene,
     onChangeOverrides,
+    updateInputs,
   } = options;
 
   let inputs: (string | HTMLElement)[] = [
@@ -29,8 +31,13 @@ export function inputsForScene(options: {
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
-      createCheckbox('Latte pen tool', scene.lattePen, () => {
-        scene.lattePen = !scene.lattePen;
+      createRadioInput('Milk', scene.tool === 'Milk', () => {
+        scene.tool = 'Milk';
+        updateInputs();
+      }),
+      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
+        scene.tool = 'Latte Pen';
+        updateInputs();
       })
     );
   }
@@ -235,8 +242,24 @@ function createCheckbox(
   checked: boolean,
   fn: (setChecked: (checked: boolean) => void) => void
 ) {
+  return createInput(text, checked, 'checkbox', fn);
+}
+function createRadioInput(
+  text: string,
+  checked: boolean,
+  fn: (setChecked: (checked: boolean) => void) => void
+) {
+  return createInput(text, checked, 'radio', fn);
+}
+
+function createInput(
+  text: string,
+  checked: boolean,
+  type: 'checkbox' | 'radio',
+  fn: (setChecked: (checked: boolean) => void) => void
+) {
   let checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
+  checkbox.type = type;
   checkbox.checked = checked;
 
   const setChecked = (checked: boolean) => (checkbox.checked = checked);

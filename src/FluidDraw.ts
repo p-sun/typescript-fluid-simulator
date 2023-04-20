@@ -1,4 +1,5 @@
-import { clamp, Scene } from './FluidScene';
+import { Scene } from './FluidScene';
+import { clamp } from './Utils/MathUtils';
 import Vec2 from './Utils/Vec2';
 
 function sizeTransformations(cSize: Vec2) {
@@ -236,22 +237,6 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
 }
 
 // ----------------- Drawing utils ------------------------------
-
-function setColor(
-  r: number,
-  g: number,
-  b: number,
-  c: CanvasRenderingContext2D
-) {
-  c.fillStyle = `rgb(
-      ${Math.floor(255 * r)},
-      ${Math.floor(255 * g)},
-      ${Math.floor(255 * b)})`;
-  c.strokeStyle = `rgb(
-      ${Math.floor(255 * r)},
-      ${Math.floor(255 * g)},
-      ${Math.floor(255 * b)})`;
-}
 
 function blendColors(top: number[], bottom: number[], opacity: number) {
   return [

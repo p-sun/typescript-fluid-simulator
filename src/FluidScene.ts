@@ -1,4 +1,5 @@
 import { FluidPhysics } from './FluidPhysics';
+import { remap } from './Utils/MathUtils';
 import Vec2 from './Utils/Vec2';
 
 export type SceneTag =
@@ -255,26 +256,6 @@ export function setObstacle(
       }
     }
   }
-}
-
-function remap(
-  n: number,
-  start1: number,
-  stop1: number,
-  start2: number,
-  stop2: number
-) {
-  const val = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
-  return clamp(val, start2, stop2);
-}
-
-export function clamp(n: number, min: number, max: number) {
-  if (min > max) {
-    const tmp = min;
-    min = max;
-    max = tmp;
-  }
-  return Math.max(min, Math.min(max, n));
 }
 
 const removeKeysWithUndefinedValues = <T extends { [key: string]: unknown }>(

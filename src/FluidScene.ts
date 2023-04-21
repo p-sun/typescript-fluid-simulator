@@ -228,8 +228,8 @@ export function setObstacle(
               f.u[i * n + j] = vx * (dx / r) * latteV * (dx > 0 ? 1 : -1);
               f.v[i * n + j] = dy < 0 ? (dy / r) * latteV : 0;
             } else if (tool === 'Latte Pen' && insideObstacle) {
-              f.u[i * n + j] = vx / 2;
-              f.v[i * n + j] = vy / 2;
+              f.u[i * n + j] = clamp(vx / 2, -0.2, 0.2);
+              f.v[i * n + j] = clamp(vy / 2, -0.2, 0.2);
             }
           }
         }

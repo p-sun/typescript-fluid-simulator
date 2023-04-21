@@ -30,16 +30,20 @@ export function inputsForScene(options: {
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
-      createRadioInput('Milk', scene.tool === 'Milk', () => {
+      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
+        scene.tool = 'Latte Pen';
+        updateInputs();
+      }),
+      createRadioInput('Pour Milk', scene.tool === 'Milk', () => {
         scene.tool = 'Milk';
+        updateInputs();
+      }),
+      createRadioInput('Spoon Milk', scene.tool === 'Spoon', () => {
+        scene.tool = 'Spoon';
         updateInputs();
       }),
       createRadioInput('Chocolate', scene.tool === 'Chocolate', () => {
         scene.tool = 'Chocolate';
-        updateInputs();
-      }),
-      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
-        scene.tool = 'Latte Pen';
         updateInputs();
       })
     );
@@ -119,7 +123,7 @@ export function inputsForScene(options: {
           initialValue: scene.chocolateRadius,
           min: 0.005,
           max: 0.1,
-          stepSize: 0.005,
+          stepSize: 0.001,
           label: 'Chocolate radius',
           callbackOnlyOnPointerUp: true,
         },

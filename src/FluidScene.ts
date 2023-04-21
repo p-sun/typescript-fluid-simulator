@@ -9,7 +9,7 @@ export type SceneTag =
   | 'HiRes Scene'
   | 'Latte Scene';
 
-export type LatteTool = 'Milk' | 'Latte Pen' | 'Chocolate';
+export type LatteTool = 'Milk' | 'Spoon' | 'Latte Pen' | 'Chocolate';
 
 export type Scene = {
   tag: SceneTag;
@@ -210,7 +210,7 @@ export function setObstacle(
         } else {
           if (insideObstacle) {
             f.s[i * n + j] = 0.0; // Solid cell
-            if (tool === 'Milk') {
+            if (tool === 'Milk' || tool === 'Spoon') {
               f.m[i * n + j] = 1; // White smoke
               f.c[i * n + j] = 0;
             } else if (tool === 'Chocolate') {

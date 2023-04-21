@@ -94,8 +94,10 @@ export class FluidSim implements CanvasListener {
   simulate() {
     this.scene.fluid.simulate(this.scene, this.scene.dt);
     if (
-      this.scene.tag !== 'Latte Scene' ||
-      (this.scene.tag == 'Latte Scene' && this.mouseDown)
+      this.scene.tag === 'Paint Scene' ||
+      (this.scene.tag == 'Latte Scene' &&
+        this.scene.tool === 'Milk' &&
+        this.mouseDown)
     ) {
       this.scene.frameNr = this.scene.frameNr + 1;
     }

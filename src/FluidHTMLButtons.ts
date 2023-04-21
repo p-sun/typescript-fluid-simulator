@@ -52,7 +52,7 @@ export function inputsForScene(options: {
       {
         initialValue: scene.obstacleRadius,
         min: 0.005,
-        max: 0.2,
+        max: scene.tag === 'Latte Scene' ? 0.1 : 0.2,
         stepSize: 0.005,
         label: scene.tag === 'Latte Scene' ? 'Milk radius' : 'Obstacle radius',
         callbackOnlyOnPointerUp: false,
@@ -93,7 +93,7 @@ export function inputsForScene(options: {
           max: 1.2,
           stepSize: 0.001,
           label: 'Milk speed',
-          callbackOnlyOnPointerUp: false,
+          callbackOnlyOnPointerUp: true,
         },
         (val) => {
           scene.milkStartSpeed = val;
@@ -112,6 +112,34 @@ export function inputsForScene(options: {
         (val) => {
           scene.timeToZeroMilkSpeed = val;
           onChangeOverrides({ timeToZeroMilkSpeed: val });
+        }
+      ),
+      createSliderWithText(
+        {
+          initialValue: scene.chocolateRadius,
+          min: 0.005,
+          max: 0.1,
+          stepSize: 0.005,
+          label: 'Chocolate radius',
+          callbackOnlyOnPointerUp: true,
+        },
+        (val) => {
+          scene.chocolateRadius = val;
+          onChangeOverrides({ chocolateRadius: val });
+        }
+      ),
+      createSliderWithText(
+        {
+          initialValue: scene.lattePenRadius,
+          min: 0.005,
+          max: 0.02,
+          stepSize: 0.001,
+          label: 'Latte Pen radius',
+          callbackOnlyOnPointerUp: true,
+        },
+        (val) => {
+          scene.lattePenRadius = val;
+          onChangeOverrides({ lattePenRadius: val });
         }
       )
     );

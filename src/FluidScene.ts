@@ -1,5 +1,5 @@
 import { FluidPhysics } from './FluidPhysics';
-import { remap } from './Utils/MathUtils';
+import { clamp, remap } from './Utils/MathUtils';
 import Vec2 from './Utils/Vec2';
 
 export type SceneTag =
@@ -41,6 +41,8 @@ const defaultSceneConfig = {
   // Latte Art Specific
   tool: 'Milk' as LatteTool,
   latteCupRadius: 0.4,
+  lattePenRadius: 0.006,
+  chocolateRadius: 0.02,
   milkStartSpeed: 0.8,
   timeToZeroMilkSpeed: 6.0,
   timeToMinObstacleRadius: 7.0,
@@ -185,10 +187,10 @@ export function setObstacle(
         r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
       }
     } else if (tool === 'Chocolate') {
-      r = 0.02;
+      r = scene.chocolateRadius;
       latteV = 0;
     } else if (tool === 'Latte Pen') {
-      r = 0.006;
+      r = scene.lattePenRadius;
       latteV = 0;
     }
   }

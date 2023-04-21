@@ -82,11 +82,11 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
           } else {
             const contrast = 2.8;
             const lightness = (s - 0.5) * contrast + 0.5;
-            color = blendWhite(espresso, Math.max(0.0, lightness));
+            color = blendWhite(espresso, clamp(lightness, 0, 1));
 
             const c = f.c[i * n + j];
             if (c > 0.0) {
-              color = blendColors(chocolate, color, clamp(c * contrast, 0, 1));
+              color = blendColors(chocolate, color, clamp(c, 0, 1));
             }
           }
         } else {

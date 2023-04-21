@@ -70,6 +70,9 @@ export class FluidSim implements CanvasListener {
       this.pausePressed();
     } else if (key === 'c') {
       this.setScene(this.scene.tag);
+    } else if (key === 'r') {
+      this.overrides = {};
+      this.setScene(this.scene.tag);
     }
   }
 

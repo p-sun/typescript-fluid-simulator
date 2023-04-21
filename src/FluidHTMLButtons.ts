@@ -20,8 +20,11 @@ export function inputsForScene(options: {
 
   let inputs: (string | HTMLElement)[] = [
     createBreak(),
-    createButton('Clear (C)', () => {
+    createButton('Clear', () => {
       onKeyPress('c');
+    }),
+    createButton('Reset', () => {
+      onKeyPress('r');
     }),
   ];
 

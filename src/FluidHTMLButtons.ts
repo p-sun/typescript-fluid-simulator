@@ -215,11 +215,10 @@ export function inputsForScene(options: {
 
   inputs.push(
     createBreak(),
-    createButton(scene.paused ? 'Start (P)' : 'Pause (P)', (setText) => {
-      setText(!scene.paused ? 'Start (P)' : 'Pause (P)');
+    createButton(scene.paused ? 'Start (P)' : 'Pause (P)', () => {
       onKeyPress('p');
     }),
-    createButton('Next Frame (N)', (setText) => {
+    createButton('Next Frame (N)', () => {
       onKeyPress('n');
     }),
     createButton('Latte scene', () => {

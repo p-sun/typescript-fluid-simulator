@@ -77,10 +77,11 @@ export class FluidSim implements CanvasListener {
   }
 
   step() {
-    this.scene.paused = false;
+    if (!this.scene.paused) {
+      this.pausePressed();
+    }
     this.simulate();
     draw(this.scene, this.cSize, this.context);
-    this.scene.paused = true;
   }
 
   update() {
@@ -108,6 +109,7 @@ export class FluidSim implements CanvasListener {
     if (!this.scene.paused) {
       this.update();
     }
+    this.setDiv(this.scene);
   }
 
   startDrag(cx: number, cy: number, isLeft: boolean) {

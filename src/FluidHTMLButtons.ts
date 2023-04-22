@@ -315,6 +315,7 @@ function createInput(
   container.style.display = 'flex';
   container.style.alignItems = 'center';
   container.style.columnGap = '2px';
+  container.style.alignItems = 'start';
 
   container.appendChild(label);
 

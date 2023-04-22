@@ -45,7 +45,7 @@ export function draw(scene: Scene, cSize: Vec2, c: CanvasRenderingContext2D) {
     maxP = Math.max(maxP, f.p[i]);
   }
 
-  const pxPerCell = Math.ceil(cL(h) * windowScale);
+  const pxPerCell = Math.ceil(cL(h) * windowScale + 0.5);
   const id = c.getImageData(0, 0, pxWidth, pxHeight);
 
   let color = [255, 255, 255, 255];

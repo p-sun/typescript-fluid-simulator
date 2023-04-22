@@ -48,7 +48,10 @@ export function inputsForScene(options: {
 
   inputs.push(createBreak());
 
-  inputs.push(
+  let sliders = createSliderContainer();
+  inputs.push(sliders);
+
+  sliders.append(
     createSliderWithText(
       {
         initialValue: scene.obstacleRadius,
@@ -67,7 +70,7 @@ export function inputsForScene(options: {
   );
 
   if (scene.tag === 'Latte Scene') {
-    inputs.push(
+    sliders.append(
       createSliderWithText(
         {
           initialValue: scene.timeToMinObstacleRadius,
@@ -86,7 +89,7 @@ export function inputsForScene(options: {
   }
 
   if (scene.tag === 'Latte Scene') {
-    inputs.push(
+    sliders.append(
       createSliderWithText(
         {
           initialValue: scene.milkStartSpeed,
@@ -146,7 +149,7 @@ export function inputsForScene(options: {
     );
   }
 
-  inputs.push(
+  sliders.append(
     createSliderWithText(
       {
         initialValue: scene.overRelaxation,
@@ -315,5 +318,16 @@ function createInput(
 
   container.appendChild(label);
 
+  return container;
+}
+
+function createSliderContainer() {
+  let container = document.createElement('div');
+  container.style.display = 'grid';
+  container.style.gridTemplateColumns =
+    'repeat(auto-fit, minmax(min(100%/2, max(280px, 100%/3)), 1fr))';
+  container.style.columnGap = 'inherit';
+  container.style.rowGap = 'inherit';
+  container.style.width = '100%';
   return container;
 }

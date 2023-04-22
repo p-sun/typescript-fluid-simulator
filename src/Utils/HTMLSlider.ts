@@ -30,7 +30,7 @@ function createSlider(options: SliderOptions) {
 
 function createText(options: SliderOptions) {
   const text = document.createElement('input');
-  text.style.width = '36px';
+  text.style.width = '44px';
   text.value = options.initialValue.toString();
   return text;
 }
@@ -46,7 +46,6 @@ function createContainer(
   container.style.backgroundColor = '#cfcfcf';
   container.style.padding = '4px';
   container.style.borderRadius = '4px';
-  container.style.flexGrow = '1';
 
   if (options.label) {
     const label = document.createElement('div');

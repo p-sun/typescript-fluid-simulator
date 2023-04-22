@@ -23,22 +23,19 @@ export function inputsForScene(options: {
     createButton('Clear', () => {
       onKeyPress('c');
     }),
-    createButton('Reset', () => {
-      onKeyPress('r');
-    }),
   ];
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
-      createRadioInput('Latte pen', scene.tool === 'Latte Pen', () => {
+      createRadioInput('Pen', scene.tool === 'Latte Pen', () => {
         scene.tool = 'Latte Pen';
         updateInputs();
       }),
-      createRadioInput('Pour Milk', scene.tool === 'Milk', () => {
+      createRadioInput('Milk', scene.tool === 'Milk', () => {
         scene.tool = 'Milk';
         updateInputs();
       }),
-      createRadioInput('Spoon Milk', scene.tool === 'Spoon', () => {
+      createRadioInput('Spoon', scene.tool === 'Spoon', () => {
         scene.tool = 'Spoon';
         updateInputs();
       }),
@@ -254,7 +251,7 @@ export function inputsForScene(options: {
 function createDivider() {
   const br = document.createElement('div');
   br.style.flexBasis = '100%';
-  br.style.height = '2pt';
+  br.style.height = '2px';
   br.style.backgroundColor = 'lightGray';
   return br;
 }
@@ -262,7 +259,7 @@ function createDivider() {
 function createBreak() {
   const br = document.createElement('div');
   br.style.flexBasis = '100%';
-  br.style.height = '4pt';
+  br.style.height = '4px';
   return br;
 }
 

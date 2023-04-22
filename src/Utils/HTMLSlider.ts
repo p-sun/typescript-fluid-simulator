@@ -30,7 +30,7 @@ function createSlider(options: SliderOptions) {
 
 function createText(options: SliderOptions) {
   const text = document.createElement('input');
-  text.style.width = '36pt';
+  text.style.width = '36px';
   text.value = options.initialValue.toString();
   return text;
 }
@@ -44,14 +44,14 @@ function createContainer(
   const container = document.createElement('div');
   container.style.display = 'flex';
   container.style.backgroundColor = '#cfcfcf';
-  container.style.padding = '4pt';
-  container.style.borderRadius = '4pt';
+  container.style.padding = '4px';
+  container.style.borderRadius = '4px';
   container.style.flexGrow = '1';
 
   if (options.label) {
     const label = document.createElement('div');
     label.innerText = options.label;
-    label.style.marginRight = '8pt';
+    label.style.marginRight = '8px';
     container.appendChild(label);
   }
 

@@ -40,7 +40,7 @@ const defaultSceneConfig = {
 
   // Latte Art Specific
   tool: 'Milk' as LatteTool,
-  latteCupRadius: 0.4,
+  latteCupRadius: 0.42,
   lattePenRadius: 0.006,
   chocolateRadius: 0.02,
   milkStartSpeed: 0.8,

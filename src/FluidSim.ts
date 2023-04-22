@@ -14,7 +14,7 @@ export class FluidSim implements CanvasListener {
   private scene: Scene;
   private mouseDown = false;
   private overrides: Partial<SceneConfig> = {};
-  private readonly cSize: Vec2;
+  private cSize: Vec2;
   private readonly inputDiv: HTMLElement;
   private readonly context: CanvasRenderingContext2D;
 
@@ -30,6 +30,11 @@ export class FluidSim implements CanvasListener {
     this.inputDiv = inputDiv;
     this.context = context;
     this.scene = this.setScene(sceneTag);
+  }
+
+  setSize(cSize: Vec2) {
+    this.cSize = cSize;
+    this.setScene(this.scene.tag);
   }
 
   setScene(sceneTag: SceneTag): Scene {
@@ -143,24 +148,39 @@ export class FluidSim implements CanvasListener {
 
 export function createFluidSim(options: {
   initialSceneTag: SceneTag;
-  canvasDomId: string;
-  inputDomId: string;
-  canvasSize: Vec2;
   autostart: boolean;
   overrides: Partial<SceneConfig>;
 }) {
   const fluidCanvas = new Canvas(
-    document.getElementById(options.canvasDomId) as HTMLCanvasElement,
-    options.canvasSize
+    document.getElementById('myCanvas') as HTMLCanvasElement,
+    canvasSize()
   );
   const fluidSim = new FluidSim(
     options.initialSceneTag,
-    options.canvasSize,
+    canvasSize(),
     options.overrides,
-    document.getElementById(options.inputDomId) as HTMLCanvasElement,
+    document.getElementById('inputDiv') as HTMLCanvasElement,
     fluidCanvas.context
   );
   fluidCanvas.setListener(fluidSim);
 
+  const resizeCanvas = () => {
+    const actualSize = canvasSize();
+    fluidCanvas.setCanvasSize(actualSize);
+    fluidSim.setSize(actualSize);
+  };
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
   options.autostart ? fluidSim.update() : fluidSim.step();
+}
+
+function canvasSize() {
+  const container = document.getElementById('canvasContainer')!;
+  if (container.clientWidth <= 800) {
+    return new Vec2(container.clientWidth, container.clientWidth);
+  } else {
+    return new Vec2(container.clientWidth, window.innerHeight - 280);
+  }
 }

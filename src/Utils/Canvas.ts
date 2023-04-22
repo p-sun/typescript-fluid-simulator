@@ -10,16 +10,16 @@ export interface CanvasListener {
 export class Canvas {
   #context: CanvasRenderingContext2D;
   #canvas: HTMLCanvasElement;
-  #size: Vec2 = Vec2.zero;
+  #size: Vec2 = new Vec2(300, 150);
   #listener: CanvasListener | undefined;
 
-  constructor(canvas: HTMLCanvasElement, newSize: Vec2) {
+  constructor(canvas: HTMLCanvasElement, size: Vec2) {
     this.#canvas = canvas;
     this.#context = canvas.getContext('2d', {
       willReadFrequently: true,
     }) as CanvasRenderingContext2D;
-    this.setCanvasSize(newSize);
     this.setupListeners();
+    this.setCanvasSize(size);
   }
 
   setListener(listener: CanvasListener) {

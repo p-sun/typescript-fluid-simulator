@@ -244,7 +244,7 @@ export function inputsForScene(options: {
 
   if (scene.tag === 'Latte Scene') {
     inputs.push(
-      `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
+      `\"Milk" tool + left drag pours milk. Right drag, or "Pen" tool + left drag pushes milk around.`
     );
   }
 

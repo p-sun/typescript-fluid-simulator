@@ -5,8 +5,7 @@ export type SceneTag =
   | 'Wind Scene'
   | 'Paint Scene'
   | 'Tank Scene'
-  | 'HiRes Scene'
-  | 'Latte Scene';
+  | 'HiRes Scene';
 
 export type Scene = {
   tag: SceneTag;
@@ -34,13 +33,6 @@ const defaultSceneConfig = {
   showPressure: false,
   showSmoke: true,
   showSolid: false,
-
-  // Latte Art Specific
-  lattePen: false,
-  latteCupRadius: 0.4,
-  milkStartSpeed: 0.8,
-  timeToZeroMilkSpeed: 6.0,
-  timeToMinObstacleRadius: 7.0,
 };
 
 export type SceneConfig = typeof defaultSceneConfig;
@@ -68,16 +60,6 @@ function makeSceneConfig(tag: SceneTag): SceneConfig {
         resolution: 50,
         showPressure: true,
         showSmoke: false,
-      };
-    case 'Latte Scene':
-      return {
-        ...defaultSceneConfig,
-        resolution: 180,
-        numIters: 20,
-        overRelaxation: 1.4,
-        obstacleRadius: 0.036,
-        drag: 0.97,
-        showObstacle: false,
       };
     default:
       return {
@@ -146,12 +128,6 @@ export function makeScene(
     for (let j = minJ; j < maxJ; j++) f.m[j] = 0; // Black smoke = 0
 
     setObstacle(scene, 0.4, 0.5, true, true);
-  } else if (tag === 'Latte Scene') {
-    for (let i = 0; i < f.numX; i++) {
-      for (let j = 0; j < f.numY; j++) {
-        f.m[i * n + j] = 0; // Darkest Brown Smoke
-      }
-    }
   }
 
   return scene;
@@ -179,84 +155,33 @@ export function setObstacle(
   const f = scene.fluid;
   const n = f.numY;
 
-  const latteCupOuter = scene.latteCupRadius;
-  const latteCupInner = latteCupOuter - 0.01;
-  const latteMilk = isLeft && !scene.lattePen;
-  const minRadius = 0.015;
-  let latteV = 0.0; // Latte velocity
-  if (scene.tag === 'Latte Scene') {
-    const framesTo0Speed = scene.timeToZeroMilkSpeed / scene.dt;
-    const framesToMinRadius = scene.timeToMinObstacleRadius / scene.dt;
-
-    if (latteMilk) {
-      latteV = remap(scene.frameNr, 0, framesTo0Speed, scene.milkStartSpeed, 0);
-      if (scene.frameNr <= framesToMinRadius) {
-        // Over some secs after mouse press, the radius shrinks from r to minRadius
-        r = remap(scene.frameNr, 0, framesToMinRadius, r, minRadius);
-      }
-    } else {
-      r = 0.005;
-      latteV = 0.0;
-    }
-  }
-
   // For all cells except the 4 sides
   for (let i = 1; i < f.numX - 2; i++) {
     for (let j = 1; j < f.numY - 2; j++) {
       const dx = (i + 0.5) * f.h - x;
       const dy = (j + 0.5) * f.h - y;
       const insideObstacle = dx * dx + dy * dy < r * r;
-      if (scene.tag === 'Latte Scene') {
-        const lx = (i + 0.5 - f.numX / 2) * f.h;
-        const ly = (j + 0.5 - f.numY / 2) * f.h;
-        const dFromCenter = lx * lx + ly * ly;
-        if (dFromCenter > latteCupOuter * latteCupOuter) {
-          f.s[i * n + j] = 0; // Solid
-        } else {
-          if (insideObstacle) {
-            f.s[i * n + j] = 0.0; // Solid cell
-            if (latteMilk) {
-              f.m[i * n + j] = 1; // White smoke
-            }
-          } else {
-            f.s[i * n + j] = 1; // Fluid
-          }
 
-          const isInsideInnerCup = dFromCenter < latteCupInner * latteCupInner;
-          const aroundObstacle = dx * dx + dy * dy < (r + 0.03) * (r + 0.03);
-          if (isInsideInnerCup) {
-            if (latteMilk && aroundObstacle) {
-              // Horizontal velocity is dampened mouse velocity. Faster on the edges.
-              f.u[i * n + j] = vx * (dx / r) * latteV * (dx > 0 ? 1 : -1);
-              f.v[i * n + j] = dy < 0 ? (dy / r) * latteV : 0;
-            } else if (!latteMilk && insideObstacle) {
-              f.u[i * n + j] = vx;
-              f.v[i * n + j] = vy;
-            }
-          }
+      if (insideObstacle) {
+        // Set cell to solid
+        f.s[i * n + j] = 0.0;
+
+        if (scene.tag === 'Paint Scene') {
+          // Set smoke to # based on time, between 0 & 1 inclusive
+          f.m[i * n + j] = 0.5 + 0.5 * Math.sin(0.1 * scene.frameNr);
+        } else {
+          // Set smoke to white
+          f.m[i * n + j] = 1.0;
         }
+
+        // New velocity is how fast the obstacle moved since last frame
+        f.u[i * n + j] = vx;
+        f.u[(i + 1) * n + j] = vx;
+        f.v[i * n + j] = vy;
+        f.v[i * n + j + 1] = vy;
       } else {
-        if (insideObstacle) {
-          // Set cell to solid
-          f.s[i * n + j] = 0.0;
-
-          if (scene.tag === 'Paint Scene') {
-            // Set smoke to # based on time, between 0 & 1 inclusive
-            f.m[i * n + j] = 0.5 + 0.5 * Math.sin(0.1 * scene.frameNr);
-          } else {
-            // Set smoke to white
-            f.m[i * n + j] = 1.0;
-          }
-
-          // New velocity is how fast the obstacle moved since last frame
-          f.u[i * n + j] = vx;
-          f.u[(i + 1) * n + j] = vx;
-          f.v[i * n + j] = vy;
-          f.v[i * n + j + 1] = vy;
-        } else {
-          // Set to fluid
-          f.s[i * n + j] = 1.0;
-        }
+        // Set to fluid
+        f.s[i * n + j] = 1.0;
       }
     }
   }

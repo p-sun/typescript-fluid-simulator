@@ -1,8 +1,6 @@
 import { Scene, SceneConfig, SceneTag } from './FluidScene';
 import { createSliderWithText } from './Utils/HTMLSlider';
 
-const lattePenButtonId = 'lattePenButton';
-
 export function inputsForScene(options: {
   scene: Scene;
   onPauseToggled: () => void;
@@ -27,9 +25,6 @@ export function inputsForScene(options: {
     createButton('Clear', () => {
       onChangeScene(scene.tag, false);
     }),
-    createButton('Latte scene', () => {
-      onChangeScene('Latte Scene', true);
-    }),
     createButton('Wind scene', () => {
       onChangeScene('Wind Scene', true);
     }),
@@ -45,14 +40,6 @@ export function inputsForScene(options: {
   ];
 
   inputs.push(createBreak());
-
-  if (scene.tag === 'Latte Scene') {
-    inputs.push(
-      createCheckbox('Latte pen tool', scene.lattePen, () => {
-        scene.lattePen = !scene.lattePen;
-      })
-    );
-  }
 
   inputs.push(
     createCheckbox('Streamlines', scene.showStreamlines, () => {
@@ -84,7 +71,7 @@ export function inputsForScene(options: {
         min: 0.005,
         max: 0.2,
         stepSize: 0.005,
-        label: scene.tag === 'Latte Scene' ? 'Milk radius' : 'Obstacle radius',
+        label: 'Obstacle radius',
         callbackOnlyOnPointerUp: false,
       },
       (val) => {
@@ -94,58 +81,6 @@ export function inputsForScene(options: {
       }
     )
   );
-
-  if (scene.tag === 'Latte Scene') {
-    inputs.push(
-      createSliderWithText(
-        {
-          initialValue: scene.timeToMinObstacleRadius,
-          min: 0.1,
-          max: 25,
-          stepSize: 0.1,
-          label: 'Time to min radius',
-          callbackOnlyOnPointerUp: true,
-        },
-        (val) => {
-          scene.timeToMinObstacleRadius = val;
-          onChangeOverrides({ timeToMinObstacleRadius: val });
-        }
-      )
-    );
-  }
-
-  if (scene.tag === 'Latte Scene') {
-    inputs.push(
-      createSliderWithText(
-        {
-          initialValue: scene.milkStartSpeed,
-          min: 0,
-          max: 1.2,
-          stepSize: 0.001,
-          label: 'Milk speed',
-          callbackOnlyOnPointerUp: false,
-        },
-        (val) => {
-          scene.milkStartSpeed = val;
-          onChangeOverrides({ milkStartSpeed: val });
-        }
-      ),
-      createSliderWithText(
-        {
-          initialValue: scene.timeToZeroMilkSpeed,
-          min: 0.1,
-          max: 18,
-          stepSize: 0.1,
-          label: 'Time to 0 milk speed',
-          callbackOnlyOnPointerUp: true,
-        },
-        (val) => {
-          scene.timeToZeroMilkSpeed = val;
-          onChangeOverrides({ timeToZeroMilkSpeed: val });
-        }
-      )
-    );
-  }
 
   inputs.push(
     createSliderWithText(
@@ -189,8 +124,7 @@ export function inputsForScene(options: {
         onChangeScene(scene.tag, false);
       }
     ),
-    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`,
-    `\nLeft drag to pour "milk", right drag or check the "Latte pen tool" checkbox.`
+    `Shortcuts: 'P' for Pause/Start, 'M' for Step Next Frame`
   );
 
   return inputs;

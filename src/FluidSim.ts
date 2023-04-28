@@ -51,12 +51,7 @@ export class FluidSim implements CanvasListener {
 
   simulate() {
     this.scene.fluid.simulate(this.scene, this.scene.dt);
-    if (
-      this.scene.tag !== 'Latte Scene' ||
-      (this.scene.tag == 'Latte Scene' && this.mouseDown)
-    ) {
-      this.scene.frameNr = this.scene.frameNr + 1;
-    }
+    this.scene.frameNr = this.scene.frameNr + 1;
   }
 
   pausePressed() {
@@ -79,9 +74,6 @@ export class FluidSim implements CanvasListener {
 
   endDrag() {
     this.mouseDown = false;
-    if (this.scene.tag === 'Latte Scene') {
-      setObstacle(this.scene, 0, 0, true);
-    }
   }
 
   updateObstacle() {
